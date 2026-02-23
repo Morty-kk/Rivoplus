@@ -5,6 +5,7 @@ import RivoLogo from "@/components/RivoLogo";
 import heroBg from "@/assets/hero-bg.jpg";
 
 import { copy, products, type Language, type Product } from "./index-content";
+import { Link } from "react-router-dom";
 
 const languageOrder: Language[] = ["ar", "en", "de"];
 
@@ -90,15 +91,15 @@ const Index = () => {
         <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-4">
           <RivoLogo className="h-10 w-[130px]" />
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <a href="#products" className="transition-colors hover:text-foreground">
+            <Link to="/products" className="transition-colors hover:text-foreground">
               {t.nav.products}
-            </a>
-            <a href="#" className="transition-colors hover:text-foreground">
+            </Link>
+            <Link to="/pricing" className="transition-colors hover:text-foreground">
               {t.nav.pricing}
-            </a>
-            <a href="#" className="transition-colors hover:text-foreground">
+            </Link>
+            <Link to="#" className="transition-colors hover:text-foreground">
               {t.nav.support}
-            </a>
+            </Link>
             <a href="#contact" className="transition-colors hover:text-foreground">
               {t.nav.contact}
             </a>

@@ -35,7 +35,8 @@
     --ring: 207 90% 46%;
 
     --radius: 0.75rem;
-
+    /* new: blur amount variable for easier tuning */
+    --blur-amount: 8px;
     --sidebar-background: 210 33% 97%;
     --sidebar-foreground: 220 20% 14%;
     --sidebar-primary: 207 90% 46%;
@@ -111,7 +112,8 @@
 
   .glass {
     background: var(--surface-glass);
-    backdrop-filter: blur(16px);
+    /* use variable so blur can be tuned; reduced for better background visibility */
+    backdrop-filter: blur(var(--blur-amount));
     border: 1px solid hsl(var(--border) / 0.6);
   }
 
