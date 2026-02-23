@@ -65,11 +65,6 @@ const getInitialLanguage = (): Language => {
   return "ar";
 };
 
-const getNextLanguage = (language: Language): Language => {
-  const currentIndex = languageOrder.indexOf(language);
-  return languageOrder[(currentIndex + 1) % languageOrder.length];
-};
-
 const Index = () => {
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
@@ -103,15 +98,23 @@ const Index = () => {
               {t.nav.contact}
             </a>
 
-            <button
-              type="button"
-              onClick={() => setLanguage(getNextLanguage(language))}
+            <label
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2 text-foreground transition-colors hover:bg-muted"
               aria-label={t.language.switchAria}
             >
               <Globe className="h-4 w-4" />
-              {t.language[language]}
-            </button>
+              <select
+                value={language}
+                onChange={(event) => setLanguage(event.target.value as Language)}
+                className="bg-transparent text-foreground outline-none"
+              >
+                {languageOrder.map((locale) => (
+                  <option key={locale} value={locale} className="bg-background text-foreground">
+                    {t.language[locale]}
+                  </option>
+                ))}
+              </select>
+            </label>
 
             <button
               type="button"
