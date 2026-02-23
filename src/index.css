@@ -6,6 +6,52 @@
 
 @layer base {
   :root {
+    --background: 210 40% 98%;
+    --foreground: 220 20% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 8%;
+
+    --primary: 207 90% 46%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 30% 94%;
+    --secondary-foreground: 220 20% 14%;
+
+    --muted: 210 30% 95%;
+    --muted-foreground: 215 18% 40%;
+
+    --accent: 207 90% 46%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 24% 88%;
+    --input: 214 24% 88%;
+    --ring: 207 90% 46%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 210 33% 97%;
+    --sidebar-foreground: 220 20% 14%;
+    --sidebar-primary: 207 90% 46%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 30% 95%;
+    --sidebar-accent-foreground: 220 20% 14%;
+    --sidebar-border: 214 24% 88%;
+    --sidebar-ring: 207 90% 46%;
+
+    /* Custom tokens */
+    --gradient-blue: linear-gradient(135deg, hsl(207 90% 54%), hsl(207 90% 40%));
+    --glow-blue: 0 0 35px hsl(207 90% 54% / 0.2);
+    --surface-glass: hsl(0 0% 100% / 0.75);
+  }
+
+  .dark {
     --background: 220 20% 6%;
     --foreground: 210 20% 95%;
 
@@ -34,8 +80,6 @@
     --input: 220 15% 18%;
     --ring: 207 90% 54%;
 
-    --radius: 0.75rem;
-
     --sidebar-background: 220 18% 8%;
     --sidebar-foreground: 210 20% 90%;
     --sidebar-primary: 207 90% 54%;
@@ -45,8 +89,6 @@
     --sidebar-border: 220 15% 18%;
     --sidebar-ring: 207 90% 54%;
 
-    /* Custom tokens */
-    --gradient-blue: linear-gradient(135deg, hsl(207 90% 54%), hsl(207 90% 40%));
     --glow-blue: 0 0 40px hsl(207 90% 54% / 0.3);
     --surface-glass: hsl(220 18% 10% / 0.7);
   }
@@ -70,7 +112,7 @@
   .glass {
     background: var(--surface-glass);
     backdrop-filter: blur(16px);
-    border: 1px solid hsl(220 15% 20% / 0.5);
+    border: 1px solid hsl(var(--border) / 0.6);
   }
 
   .text-gradient {

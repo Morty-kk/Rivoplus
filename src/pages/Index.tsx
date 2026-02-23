@@ -1,5 +1,17 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Play, Tv, Music, Gamepad2, Cloud, ShieldCheck, MessageCircle, Send } from "lucide-react";
+import {
+  Play,
+  Tv,
+  Music,
+  Gamepad2,
+  Cloud,
+  ShieldCheck,
+  MessageCircle,
+  Send,
+  Moon,
+  Sun,
+} from "lucide-react";
 import logo from "@/assets/logo_blue_B.png";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -72,14 +84,36 @@ const ProductCard = ({
   </motion.div>
 );
 
+const getInitialTheme = () => {
+  if (typeof window === "undefined") {
+    return "light";
+  }
+
+  const savedTheme = window.localStorage.getItem("theme");
+  if (savedTheme === "light" || savedTheme === "dark") {
+    return savedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+};
+
 const Index = () => {
+  const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    window.localStorage.setItem("theme", theme);
+  }, [theme]);
+
   return (
     <div className="min-h-screen font-cairo" dir="rtl">
       {/* Navbar */}
       <nav className="fixed top-0 z-50 w-full glass">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
           <img src={logo} alt="ريفو بلس" className="h-10" />
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <a href="#products" className="transition-colors hover:text-foreground">
               المنتجات
             </a>
@@ -92,6 +126,24 @@ const Index = () => {
             <a href="#contact" className="transition-colors hover:text-foreground">
               تواصل معنا
             </a>
+            <button
+              type="button"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2 text-foreground transition-colors hover:bg-muted"
+              aria-label="تبديل المظهر"
+            >
+              {theme === "dark" ? (
+                <>
+                  <Sun className="h-4 w-4" />
+                  فاتح
+                </>
+              ) : (
+                <>
+                  <Moon className="h-4 w-4" />
+                  داكن
+                </>
+              )}
+            </button>
           </div>
         </div>
       </nav>
