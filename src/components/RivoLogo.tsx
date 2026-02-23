@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import logo from "@/assets/logo_blue_B.png";
+import logo2 from "@/assets/logo_blue_B.png";
+import logo from "@/assets/logo_black_no_B.png";
 
 type RivoLogoProps = {
   className?: string;
