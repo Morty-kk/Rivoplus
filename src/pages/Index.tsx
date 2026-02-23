@@ -96,9 +96,9 @@ const Index = () => {
             <a href="#pricing" className="transition-colors hover:text-foreground">
               {t.nav.pricing}
             </a>
-            <Link to="#" className="transition-colors hover:text-foreground">
+            <a href="#contact" className="transition-colors hover:text-foreground">
               {t.nav.support}
-            </Link>
+            </a>
             <a href="#contact" className="transition-colors hover:text-foreground">
               {t.nav.contact}
             </a>
