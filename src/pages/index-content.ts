@@ -1,4 +1,4 @@
-import { Cloud, Gamepad2, Music, ShieldCheck, Tv } from "lucide-react";
+import { Gamepad2, Music, Tv } from "lucide-react";
 
 export type Language = "ar" | "en" | "de";
 
@@ -50,30 +50,6 @@ export const products: Product[] = [
       de: "Eine große Cloud-Gaming-Bibliothek auf all deinen Geräten.",
     },
     badge: { ar: "جديد", en: "New", de: "Neu" },
-    featured: false,
-  },
-  {
-    slug: "cloud",
-    icon: Cloud,
-    title: { ar: "ريفو كلاود", en: "Rivo Cloud", de: "Rivo Cloud" },
-    description: {
-      ar: "تخزين سحابي آمن مع مساحة غير محدودة ومشاركة سهلة",
-      en: "Secure cloud storage with unlimited space and easy sharing.",
-      de: "Sicherer Cloud-Speicher mit unbegrenztem Platz und einfachem Teilen.",
-    },
-    badge: null,
-    featured: false,
-  },
-  {
-    slug: "vpn",
-    icon: ShieldCheck,
-    title: { ar: "ريفو VPN", en: "Rivo VPN", de: "Rivo VPN" },
-    description: {
-      ar: "تصفح آمن وسريع مع حماية خصوصيتك على الإنترنت",
-      en: "Browse safely and fast while protecting your online privacy.",
-      de: "Sicher und schnell surfen mit Schutz deiner Online-Privatsphäre.",
-    },
-    badge: null,
     featured: false,
   },
 ];
