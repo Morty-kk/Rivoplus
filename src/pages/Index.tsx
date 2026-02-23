@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Play, MessageCircle, Send, Moon, Sun } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  Play,
+  Tv,
+  Music,
+  Gamepad2,
+  Cloud,
+  ShieldCheck,
+  MessageCircle,
+  Send,
+  Moon,
+  Sun,
+} from "lucide-react";
 import logo from "@/assets/logo_blue_B.png";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -72,6 +83,8 @@ const Index = () => {
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
   const t = copy[language];
+const Index = () => {
+  const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -86,14 +99,17 @@ const Index = () => {
     <div className="min-h-screen font-cairo" dir={t.dir}>
       <nav className="fixed top-0 z-50 w-full glass">
         <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-4">
-          <img src={logo} alt="Rivo Plus" className="h-10 w-10 rounded-full border border-border/60 object-cover" />
+          <img src={logo} alt="Rivo Plus" className="h-10" />
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            <Link to="/products" className="transition-colors hover:text-foreground">
+        <div className="container mx-auto flex items-center justify-between px-6 py-4">
+          <img src={logo} alt="ريفو بلس" className="h-10" />
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <a href="#products" className="transition-colors hover:text-foreground">
               {t.nav.products}
-            </Link>
-            <Link to="/pricing" className="transition-colors hover:text-foreground">
+            </a>
+            <a href="#" className="transition-colors hover:text-foreground">
               {t.nav.pricing}
-            </Link>
+            </a>
             <a href="#" className="transition-colors hover:text-foreground">
               {t.nav.support}
             </a>
@@ -125,16 +141,19 @@ const Index = () => {
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2 text-foreground transition-colors hover:bg-muted"
               aria-label={t.theme.switchAria}
+              aria-label="تبديل المظهر"
             >
               {theme === "dark" ? (
                 <>
                   <Sun className="h-4 w-4" />
                   {t.theme.light}
+                  فاتح
                 </>
               ) : (
                 <>
                   <Moon className="h-4 w-4" />
                   {t.theme.dark}
+                  داكن
                 </>
               )}
             </button>
@@ -155,11 +174,7 @@ const Index = () => {
           transition={{ duration: 0.8 }}
           className="relative z-10 text-center"
         >
-          <motion.img
-            src={logo}
-            alt="Rivo Plus"
-            className="mx-auto mb-8 h-28 w-28 rounded-full border-2 border-primary/40 object-cover animate-float"
-          />
+          <motion.img src={logo} alt="Rivo Plus" className="mx-auto mb-8 h-28 animate-float" />
           <h1 className="mb-4 text-4xl font-black leading-tight text-foreground md:text-6xl">
             {t.hero.title} <span className="text-gradient">{t.hero.titleHighlight}</span>
           </h1>
