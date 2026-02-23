@@ -7,27 +7,27 @@ const pricingCopy: Record<Language, { title: string; subtitle: string; plans: { 
     title: "الأسعار",
     subtitle: "باقات مرنة تناسب احتياجك",
     plans: [
-      { name: "أساسي", price: "$9", details: "للاستخدام الشخصي" },
-      { name: "احترافي", price: "$19", details: "مزايا أكثر وجودة أعلى" },
-      { name: "مؤسسي", price: "$49", details: "للفرق والشركات" },
+      { name: "فضي", price: "$9", details: "1 شهر" },
+      { name: "ذهبي", price: "$19", details: "3 شهر" },
+      { name: "دايموند", price: "$49", details: "12 شهر" },
     ],
   },
   en: {
     title: "Pricing",
     subtitle: "Flexible plans for your needs",
     plans: [
-      { name: "Basic", price: "$9", details: "For personal use" },
-      { name: "Pro", price: "$19", details: "More features and higher quality" },
-      { name: "Business", price: "$49", details: "For teams and companies" },
+      { name: "silver", price: "$9", details: "1 Month" },
+      { name: "Gold", price: "$19", details: "3 Month" },
+      { name: "Diamond", price: "$49", details: "12 Month" },
     ],
   },
   de: {
     title: "Preise",
     subtitle: "Flexible Pakete für deinen Bedarf",
     plans: [
-      { name: "Basic", price: "$9", details: "Für private Nutzung" },
-      { name: "Pro", price: "$19", details: "Mehr Funktionen und höhere Qualität" },
-      { name: "Business", price: "$49", details: "Für Teams und Unternehmen" },
+      { name: "Silber", price: "$9", details: "1 Monat" },
+      { name: "Gold", price: "$19", details: "3 Monaten" },
+      { name: "Diamant", price: "$49", details: "12 Monaten" },
     ],
   },
 };
