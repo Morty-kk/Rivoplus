@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Play, MessageCircle, Send, Moon, Sun } from "lucide-react";
-import { Link } from "react-router-dom";
-import logo from "@/assets/logo_blue_B.png";
+import { Globe, Moon, Play, Send, Sun, MessageCircle } from "lucide-react";
+import RivoLogo from "@/components/RivoLogo";
 import heroBg from "@/assets/hero-bg.jpg";
 
 import { copy, products, type Language, type Product } from "./index-content";
+
+const languageOrder: Language[] = ["ar", "en", "de"];
 
 const ProductCard = ({
   product,
@@ -34,9 +35,7 @@ const ProductCard = ({
     )}
     <product.icon className="mb-4 h-10 w-10 text-primary" />
     <h3 className="mb-2 text-xl font-bold text-foreground">{product.title[language]}</h3>
-    <p className="text-sm leading-relaxed text-muted-foreground">
-      {product.description[language]}
-    </p>
+    <p className="text-sm leading-relaxed text-muted-foreground">{product.description[language]}</p>
   </motion.div>
 );
 
@@ -50,9 +49,7 @@ const getInitialTheme = () => {
     return savedTheme;
   }
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 };
 
 const getInitialLanguage = (): Language => {
@@ -68,12 +65,15 @@ const getInitialLanguage = (): Language => {
   return "ar";
 };
 
+const getNextLanguage = (language: Language): Language => {
+  const currentIndex = languageOrder.indexOf(language);
+  return languageOrder[(currentIndex + 1) % languageOrder.length];
+};
+
 const Index = () => {
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
   const t = copy[language];
-const Index = () => {
-  const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -88,11 +88,8 @@ const Index = () => {
     <div className="min-h-screen font-cairo" dir={t.dir}>
       <nav className="fixed top-0 z-50 w-full glass">
         <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-4">
-          <img src={logo} alt="Rivo Plus" className="h-10" />
-          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-        <div className="container mx-auto flex items-center justify-between px-6 py-4">
-          <img src={logo} alt="ريفو بلس" className="h-10" />
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <RivoLogo className="h-10 w-[130px]" />
+          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             <a href="#products" className="transition-colors hover:text-foreground">
               {t.nav.products}
             </a>
@@ -105,44 +102,32 @@ const Index = () => {
             <a href="#contact" className="transition-colors hover:text-foreground">
               {t.nav.contact}
             </a>
-            <div
-              className="inline-flex items-center rounded-lg border border-border bg-background/80 p-1 text-foreground"
-              role="group"
+
+            <button
+              type="button"
+              onClick={() => setLanguage(getNextLanguage(language))}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2 text-foreground transition-colors hover:bg-muted"
               aria-label={t.language.switchAria}
             >
-              {(["ar", "en", "de"] as const).map((lang) => (
-                <button
-                  key={lang}
-                  type="button"
-                  onClick={() => setLanguage(lang)}
-                  className={`rounded-md px-2 py-1 text-xs font-semibold transition-colors ${
-                    language === lang
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-muted"
-                  }`}
-                >
-                  {t.language[lang]}
-                </button>
-              ))}
-            </div>
+              <Globe className="h-4 w-4" />
+              {t.language[language]}
+            </button>
+
             <button
               type="button"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2 text-foreground transition-colors hover:bg-muted"
               aria-label={t.theme.switchAria}
-              aria-label="تبديل المظهر"
             >
               {theme === "dark" ? (
                 <>
                   <Sun className="h-4 w-4" />
                   {t.theme.light}
-                  فاتح
                 </>
               ) : (
                 <>
                   <Moon className="h-4 w-4" />
                   {t.theme.dark}
-                  داكن
                 </>
               )}
             </button>
@@ -151,11 +136,7 @@ const Index = () => {
       </nav>
 
       <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden">
-        <img
-          src={heroBg}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-70"
-        />
+        <img src={heroBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/35 via-background/20 to-background/85" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -163,7 +144,7 @@ const Index = () => {
           transition={{ duration: 0.8 }}
           className="relative z-10 text-center"
         >
-          <motion.img src={logo} alt="Rivo Plus" className="mx-auto mb-8 h-28 animate-float" />
+          <RivoLogo className="mx-auto mb-8 h-24 w-[210px]" animated />
           <h1 className="mb-4 text-4xl font-black leading-tight text-foreground md:text-6xl">
             {t.hero.title} <span className="text-gradient">{t.hero.titleHighlight}</span>
           </h1>
