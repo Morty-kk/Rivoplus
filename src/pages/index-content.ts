@@ -21,7 +21,7 @@ export const products: Product[] = [
       de: "Rivo Plus Stream",
     },
     description: {
-      ar: "بث مباشر لأفضل المسلسلات والأفلام بجودة 4K مع محتوى حصري",
+      ar: "بث مباشر لأفضل المسلسلات والأفلام بجودة 4K",
       en: "Stream top series and movies in 4K with exclusive content.",
       de: "Streame Top-Serien und Filme in 4K mit exklusiven Inhalten.",
     },
