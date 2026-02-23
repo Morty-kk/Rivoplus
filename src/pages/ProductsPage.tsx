@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo_blue_B.png";
 import { copy, products, type Language } from "./index-content";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const getLanguage = (): Language => {
   if (typeof window === "undefined") {
@@ -16,12 +17,6 @@ const getLanguage = (): Language => {
   return "ar";
 };
 
-const languageButtons: Record<Language, string> = {
-  ar: "🇸🇦 العربية",
-  en: "🇺🇸 English",
-  de: "🇩🇪 Deutsch",
-};
-
 const ProductsPage = () => {
   const [language, setLanguage] = useState<Language>(getLanguage);
   const t = copy[language];
@@ -32,24 +27,11 @@ const ProductsPage = () => {
 
   return (
     <main className="min-h-screen bg-background px-6 py-16 font-cairo" dir={t.dir}>
-      <div
-        className="fixed left-4 top-4 z-[60] inline-flex items-center gap-1 rounded-xl border border-border bg-background/85 p-1 text-foreground shadow-lg backdrop-blur"
-        role="group"
-        aria-label={t.language.switchAria}
-      >
-        {(["ar", "en", "de"] as const).map((lang) => (
-          <button
-            key={lang}
-            type="button"
-            onClick={() => setLanguage(lang)}
-            className={`rounded-md px-2 py-1 text-xs font-semibold transition-colors ${
-              language === lang ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-            }`}
-          >
-            {languageButtons[lang]}
-          </button>
-        ))}
-      </div>
+      <LanguageSwitcher
+        language={language}
+        onChange={setLanguage}
+        ariaLabel={t.language.switchAria}
+      />
 
       <div className="container mx-auto max-w-5xl">
         <div className="mb-10 flex items-center justify-between">

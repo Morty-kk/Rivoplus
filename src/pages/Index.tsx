@@ -6,6 +6,7 @@ import logo from "@/assets/logo_blue_B.png";
 import heroBg from "@/assets/hero-bg.jpg";
 
 import { copy, products, type Language, type Product } from "./index-content";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const ProductCard = ({
   product,
@@ -55,12 +56,6 @@ const getInitialTheme = () => {
     : "light";
 };
 
-const languageButtons: Record<Language, string> = {
-  ar: "🇸🇦 العربية",
-  en: "🇺🇸 English",
-  de: "🇩🇪 Deutsch",
-};
-
 const getInitialLanguage = (): Language => {
   if (typeof window === "undefined") {
     return "ar";
@@ -90,24 +85,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen font-cairo" dir={t.dir}>
-      <div
-        className="fixed left-4 top-4 z-[60] inline-flex items-center gap-1 rounded-xl border border-border bg-background/85 p-1 text-foreground shadow-lg backdrop-blur"
-        role="group"
-        aria-label={t.language.switchAria}
-      >
-        {(["ar", "en", "de"] as const).map((lang) => (
-          <button
-            key={lang}
-            type="button"
-            onClick={() => setLanguage(lang)}
-            className={`rounded-md px-2 py-1 text-xs font-semibold transition-colors ${
-              language === lang ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-            }`}
-          >
-            {languageButtons[lang]}
-          </button>
-        ))}
-      </div>
+      <LanguageSwitcher
+        language={language}
+        onChange={setLanguage}
+        ariaLabel={t.language.switchAria}
+      />
       <nav className="fixed top-0 z-50 w-full glass">
         <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-4">
           <img src={logo} alt="Rivo Plus" className="h-10 w-10 rounded-full border border-border/60 object-cover" />
