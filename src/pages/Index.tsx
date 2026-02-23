@@ -5,7 +5,6 @@ import RivoLogo from "@/components/RivoLogo";
 import heroBg from "@/assets/hero-bg.jpg";
 
 import { copy, products, type Language, type Product } from "./index-content";
-import { Link } from "react-router-dom";
 
 const languageOrder: Language[] = ["ar", "en", "de"];
 
@@ -91,12 +90,12 @@ const Index = () => {
         <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-4">
           <RivoLogo className="h-10 w-[130px]" />
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <Link to="/products" className="transition-colors hover:text-foreground">
+            <a href="#products" className="transition-colors hover:text-foreground">
               {t.nav.products}
-            </Link>
-            <Link to="/pricing" className="transition-colors hover:text-foreground">
+            </a>
+            <a href="#pricing" className="transition-colors hover:text-foreground">
               {t.nav.pricing}
-            </Link>
+            </a>
             <Link to="#" className="transition-colors hover:text-foreground">
               {t.nav.support}
             </Link>
@@ -175,6 +174,53 @@ const Index = () => {
           <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product, i) => (
               <ProductCard key={product.title.en} product={product} index={i} language={language} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing section moved into main page */}
+      <section id="pricing" className="py-24 bg-background">
+        <div className="container mx-auto px-6">
+          <div className="mb-14 text-center">
+            <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">{t.nav.pricing}</h2>
+            <p className="text-muted-foreground">{t.pricing?.subtitle ?? "Flexible plans for your needs"}</p>
+          </div>
+
+          <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-3">
+            {(
+              // derive plans from a small inline copy structure
+              (
+                {
+                  ar: [
+                    { name: "أساسي", price: "$9", details: "للاستخدام الشخصي" },
+                    { name: "احترافي", price: "$19", details: "مزايا أكثر وجودة أعلى" },
+                    { name: "مؤسسي", price: "$49", details: "للفرق والشركات" },
+                  ],
+                  en: [
+                    { name: "Basic", price: "$9", details: "For personal use" },
+                    { name: "Pro", price: "$19", details: "More features and higher quality" },
+                    { name: "Business", price: "$49", details: "For teams and companies" },
+                  ],
+                  de: [
+                    { name: "Basic", price: "$9", details: "Für private Nutzung" },
+                    { name: "Pro", price: "$19", details: "Mehr Funktionen und höhere Qualität" },
+                    { name: "Business", price: "$49", details: "Für Teams und Unternehmen" },
+                  ],
+                } as Record<Language, { name: string; price: string; details: string }[]>
+              )[language]
+            ).map((plan) => (
+              <motion.article
+                key={plan.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="rounded-xl border border-border bg-card p-6 text-center"
+              >
+                <h3 className="mb-2 text-lg font-bold text-foreground">{plan.name}</h3>
+                <p className="mb-2 text-2xl font-black text-primary">{plan.price}</p>
+                <p className="text-sm text-muted-foreground">{plan.details}</p>
+              </motion.article>
             ))}
           </div>
         </div>
