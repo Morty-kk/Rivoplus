@@ -26,7 +26,7 @@ const RivoLogo = ({ className, animated = false }: RivoLogoProps) => {
               : {})}
       >
         <img
-            src="/logo_blue_B.png"
+            src="src/assets/logo_blue_B.png"
             alt="Rivo Plus logo"
             className="h-full w-full object-contain"
         />
