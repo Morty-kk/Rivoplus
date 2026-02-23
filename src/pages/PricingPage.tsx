@@ -8,8 +8,9 @@ const pricingCopy: Record<Language, { title: string; subtitle: string; plans: { 
     subtitle: "باقات مرنة تناسب احتياجك",
     plans: [
       { name: "فضي", price: "$9", details: "1 شهر" },
-      { name: "ذهبي", price: "$19", details: "3 شهر" },
-      { name: "دايموند", price: "$49", details: "12 شهر" },
+      { name: "ذهبي", price: "$19", details: "3 اشهر" },
+      { name: "دايموند", price: "$49", details: "12 اشهر" },
+      { name: "دايموند", price: "$49", details: "12 اشهر" },
     ],
   },
   en: {
