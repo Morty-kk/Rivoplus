@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Play, MessageCircle, Send } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Moon, Sun, Play, MessageCircle, Send, Menu, X } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 import RivoLogo from "@/components/RivoLogo";
 import { copy, products, type Language, type Product } from "./index-content";
@@ -74,54 +75,92 @@ const ProductCard = ({
   product,
   index,
   language,
+  viewDetailsLabel,
 }: {
   product: Product;
   index: number;
   language: Language;
+  viewDetailsLabel: string;
 }) => (
   <motion.div
     initial={{ opacity: 0, y: 28 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ delay: index * 0.08, duration: 0.45 }}
-    className={`product-card p-6 ${product.featured ? "featured" : ""}`}
   >
-    {product.badge && <span className="product-card-badge">{product.badge[language]}</span>}
+    <Link
+      to={`/product/${product.slug}`}
+      className={`product-card block p-6 ${product.featured ? "featured" : ""}`}
+    >
+      {product.badge && <span className="product-card-badge">{product.badge[language]}</span>}
 
-    <div className="product-card-icon-wrap">
-      <product.icon className="h-6 w-6 text-primary" />
-    </div>
+      <div className="product-card-icon-wrap">
+        <product.icon className="h-6 w-6 text-primary" />
+      </div>
 
-    <h3 className="product-card-title">{product.title[language]}</h3>
-    <p className="product-card-desc">{product.description[language]}</p>
+      <h3 className="product-card-title">{product.title[language]}</h3>
+      <p className="product-card-desc mb-4">{product.description[language]}</p>
+
+      <span className="inline-flex items-center text-sm font-bold text-primary">
+        {viewDetailsLabel}
+      </span>
+    </Link>
   </motion.div>
 );
 
-const getInitialTheme = () => {
-  if (typeof window === "undefined") return "light";
+const FAQSection = ({ language }: { language: Language }) => {
+  const t = copy[language] ?? copy.ar;
+  const faqItems = t.faq?.items ?? [];
 
+  return (
+    <section id="faq" className="pb-24">
+      <div className="container mx-auto px-6">
+        <div className="mb-10 text-center">
+          <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">
+            {t.faq?.title ?? "FAQ"}
+          </h2>
+          <p className="text-muted-foreground">{t.faq?.subtitle ?? ""}</p>
+        </div>
+
+        <div className="mx-auto grid max-w-4xl gap-3">
+          {faqItems.map((item, idx) => (
+            <details
+              key={idx}
+              className="group rounded-xl border border-border bg-background/70 p-4 open:border-primary/30"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-foreground">
+                <span>{item.q}</span>
+                <span className="text-primary transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const getInitialTheme = (): "light" | "dark" => {
+  if (typeof window === "undefined") return "light";
   const savedTheme = window.localStorage.getItem("theme");
   if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
-
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 };
 
 const getInitialLanguage = (): Language => {
   if (typeof window === "undefined") return "ar";
-
   const savedLanguage = window.localStorage.getItem("language");
-  if (savedLanguage === "ar" || savedLanguage === "en" || savedLanguage === "de") {
-    return savedLanguage;
-  }
-
+  if (savedLanguage === "ar" || savedLanguage === "en" || savedLanguage === "de") return savedLanguage;
   return "ar";
 };
 
 const Index = () => {
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const t = copy[language];
+  const t = copy[language] ?? copy.ar;
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -130,6 +169,7 @@ const Index = () => {
 
   useEffect(() => {
     window.localStorage.setItem("language", language);
+    setMobileMenuOpen(false);
   }, [language]);
 
   return (
@@ -140,29 +180,27 @@ const Index = () => {
       className="min-h-screen"
       dir={t.dir}
     >
+      {/* NAVBAR */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/70 bg-background/70 backdrop-blur-xl">
-        <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-3
-          lg:gap-6">
-          <RivoLogo className="h-16 w-[210px]" />
+        <div className="container mx-auto flex items-center justify-between gap-2 px-3 py-2 md:gap-3 md:px-6 md:py-5">
+          <RivoLogo className="h-7 w-[90px] md:h-16 md:w-[210px]" />
 
-          <div className="flex flex-wrap items-center gap-4 text-base font-medium text-muted-foreground">
-            <a href="#products" className="nav-link-fx text-muted-foreground px-1 py-1">
-              {t.nav.products}
+          {/* Desktop Nav */}
+          <div className="hidden md:flex flex-wrap items-center gap-4 text-base font-medium text-muted-foreground">
+            <a href="#products" className="nav-link-fx px-1 py-1 text-muted-foreground">
+              {t.nav?.products ?? "Products"}
             </a>
-            <a href="#pricing" className="nav-link-fx text-muted-foreground">
-              {t.nav.pricing}
+            <a href="#faq" className="nav-link-fx px-1 py-1 text-muted-foreground">
+              {t.nav?.faq ?? "FAQ"}
             </a>
-            <a href="#contact" className="nav-link-fx text-muted-foreground">
-              {t.nav.support}
-            </a>
-            <a href="#contact" className="nav-link-fx text-muted-foreground">
-              {t.nav.contact}
+            <a href="#contact" className="nav-link-fx px-1 py-1 text-muted-foreground">
+              {t.nav?.contact ?? "Contact"}
             </a>
 
             <div
               className="inline-flex items-center gap-1 rounded-lg border border-border bg-background/80 p-1"
               role="group"
-              aria-label={t.language.switchAria}
+              aria-label={t.language?.switchAria ?? "Switch language"}
             >
               {[
                 { code: "ar", flag: "🇸🇦", label: "العربية" },
@@ -186,25 +224,154 @@ const Index = () => {
             <button
               type="button"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-3 py-2 text-foreground transition-all hover:bg-muted interactive-surface"
-              aria-label={t.theme.switchAria}
+              className="interactive-surface inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-4 py-2.5 text-base font-medium text-foreground transition-all hover:bg-muted"
+              aria-label={t.theme?.switchAria ?? "Toggle theme"}
             >
               {theme === "dark" ? (
                 <>
                   <Sun className="h-4 w-4" />
-                  {t.theme.light}
+                  {t.theme?.light ?? "Light"}
                 </>
               ) : (
                 <>
                   <Moon className="h-4 w-4" />
-                  {t.theme.dark}
+                  {t.theme?.dark ?? "Dark"}
                 </>
               )}
             </button>
           </div>
+
+          {/* Mobile Controls */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              type="button"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-foreground hover:bg-muted"
+              aria-label={t.theme?.switchAria ?? "Toggle theme"}
+            >
+              {theme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-foreground hover:bg-muted"
+              aria-label="Open menu"
+            >
+              <Menu className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Backdrop */}
+        {mobileMenuOpen && (
+          <button
+            type="button"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu backdrop"
+          />
+        )}
+
+        {/* Mobile Drawer */}
+        <div
+          className={`fixed top-0 z-50 h-screen w-[82%] max-w-[320px] bg-background/95 p-4 shadow-2xl backdrop-blur-xl transition-transform duration-300 md:hidden ${
+            t.dir === "rtl" ? "left-0 border-r border-border" : "right-0 border-l border-border"
+          } ${
+            mobileMenuOpen
+              ? "translate-x-0"
+              : t.dir === "rtl"
+              ? "-translate-x-full"
+              : "translate-x-full"
+          }`}
+          dir={t.dir}
+        >
+          <div className="mb-4 flex items-center justify-between">
+            <RivoLogo className="h-8 w-[100px]" />
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-foreground hover:bg-muted"
+              aria-label="Close menu"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="mb-4 h-px bg-border/70" />
+
+          <div className="space-y-1">
+            <a
+              href="#products"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              {t.nav?.products ?? "Products"}
+            </a>
+            <a
+              href="#faq"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              {t.nav?.faq ?? "FAQ"}
+            </a>
+            <a
+              href="#contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              {t.nav?.contact ?? "Contact"}
+            </a>
+          </div>
+
+          <div className="my-4 h-px bg-border/70" />
+
+          <div className="mb-4">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              {t.language?.switchAria ?? "Switch language"}
+            </p>
+            <div className="flex items-center gap-2">
+              {[
+                { code: "ar", flag: "🇸🇦", label: "العربية" },
+                { code: "en", flag: "🇬🇧", label: "English" },
+                { code: "de", flag: "🇩🇪", label: "Deutsch" },
+              ].map((langItem) => (
+                <button
+                  key={langItem.code}
+                  type="button"
+                  onClick={() => setLanguage(langItem.code as Language)}
+                  className={`lang-flag-btn ${language === langItem.code ? "active" : ""}`}
+                  title={langItem.label}
+                  aria-label={langItem.label}
+                >
+                  <span aria-hidden="true">{langItem.flag}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background/80 px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
+            aria-label={t.theme?.switchAria ?? "Toggle theme"}
+          >
+            {theme === "dark" ? (
+              <>
+                <Sun className="h-4 w-4" />
+                {t.theme?.light ?? "Light"}
+              </>
+            ) : (
+              <>
+                <Moon className="h-4 w-4" />
+                {t.theme?.dark ?? "Dark"}
+              </>
+            )}
+          </button>
         </div>
       </nav>
 
+      {/* HERO */}
       <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
         <img
           src={heroBg}
@@ -218,12 +385,11 @@ const Index = () => {
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
-          className="container relative z-10 mx-auto px-6 pt-28 pb-10"
+          className="container relative z-10 mx-auto px-6 pt-20 pb-10 md:pt-28"
         >
           <div className="hero-grid">
-            {/* LEFT */}
             <div className="hero-shell">
-              <div className="inline-flex mb-4">
+              <div className="mb-4 inline-flex">
                 <span className="hero-badge">
                   <span className="hero-badge-dot" />
                   {language === "ar"
@@ -241,7 +407,8 @@ const Index = () => {
                 className="hero-title-strong mb-4 text-4xl font-black text-foreground md:text-6xl"
               >
                 <span className="text-gradient">
-                  {t.hero.title} {t.hero.titleHighlight}
+                  {(t.hero?.title ?? "Everything you need in")}{" "}
+                  {(t.hero?.titleHighlight ?? "one place")}
                 </span>
               </motion.h1>
 
@@ -251,33 +418,18 @@ const Index = () => {
                 transition={{ delay: 0.12, duration: 0.55 }}
                 className="mb-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg"
               >
-                {t.hero.subtitle}
+                {t.hero?.subtitle ?? ""}
               </motion.p>
 
               <div className="mb-7 flex flex-wrap gap-2">
                 <span className="hero-chip">
-                  ⚡{" "}
-                  {language === "ar"
-                    ? "تفعيل سريع"
-                    : language === "de"
-                    ? "Schnelle Aktivierung"
-                    : "Quick activation"}
+                  ⚡ {language === "ar" ? "تفعيل سريع" : language === "de" ? "Schnelle Aktivierung" : "Quick activation"}
                 </span>
                 <span className="hero-chip">
-                  🔒{" "}
-                  {language === "ar"
-                    ? "دفع آمن"
-                    : language === "de"
-                    ? "Sicher zahlen"
-                    : "Secure checkout"}
+                  🔒 {language === "ar" ? "دفع آمن" : language === "de" ? "Sicher zahlen" : "Secure checkout"}
                 </span>
                 <span className="hero-chip">
-                  💬{" "}
-                  {language === "ar"
-                    ? "دعم سريع"
-                    : language === "de"
-                    ? "Schneller Support"
-                    : "Fast support"}
+                  💬 {language === "ar" ? "دعم سريع" : language === "de" ? "Schneller Support" : "Fast support"}
                 </span>
               </div>
 
@@ -289,19 +441,18 @@ const Index = () => {
                   className="btn-primary fancy-btn interactive-surface"
                 >
                   <Play className="h-5 w-5" />
-                  {t.hero.cta}
+                  {t.hero?.cta ?? "Explore now"}
                 </motion.a>
 
                 <a
                   href="#pricing"
                   className="interactive-surface inline-flex items-center rounded-lg border border-border bg-background/80 px-5 py-3 font-bold text-foreground hover:bg-muted"
                 >
-                  {t.nav.pricing}
+                  {t.hero?.plans ?? "Plans"}
                 </a>
               </div>
             </div>
 
-            {/* RIGHT */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -311,11 +462,7 @@ const Index = () => {
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-bold text-foreground">
-                    {language === "ar"
-                      ? "لوحة سريعة"
-                      : language === "de"
-                      ? "Quick Übersicht"
-                      : "Quick Overview"}
+                    {language === "ar" ? "لوحة سريعة" : language === "de" ? "Quick Übersicht" : "Quick Overview"}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {language === "ar"
@@ -330,15 +477,13 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="mb-3 grid grid-cols-2 gap-3">
                 <div className="metric-card">
                   <div className="mb-1 flex items-center justify-between">
                     <div className="metric-value">24/7</div>
                     <span className="text-base">🛟</span>
                   </div>
-                  <div className="metric-label font-medium">
-                    {language === "ar" ? "دعم" : language === "de" ? "Support" : "Support"}
-                  </div>
+                  <div className="metric-label font-medium">{language === "ar" ? "دعم" : "Support"}</div>
                 </div>
 
                 <div className="metric-card">
@@ -347,11 +492,7 @@ const Index = () => {
                     <span className="text-base">⭐</span>
                   </div>
                   <div className="metric-label font-medium">
-                    {language === "ar"
-                      ? "رضا العملاء"
-                      : language === "de"
-                      ? "Kundenzufriedenheit"
-                      : "Satisfaction"}
+                    {language === "ar" ? "رضا العملاء" : language === "de" ? "Kundenzufriedenheit" : "Satisfaction"}
                   </div>
                 </div>
 
@@ -361,11 +502,7 @@ const Index = () => {
                     <span className="text-base">🚀</span>
                   </div>
                   <div className="metric-label font-medium">
-                    {language === "ar"
-                      ? "تفعيل فوري"
-                      : language === "de"
-                      ? "Sofort aktiv"
-                      : "Instant delivery"}
+                    {language === "ar" ? "تفعيل فوري" : language === "de" ? "Sofort aktiv" : "Instant delivery"}
                   </div>
                 </div>
 
@@ -382,51 +519,26 @@ const Index = () => {
 
               <div className="rounded-2xl border border-border bg-background/70 p-4">
                 <p className="mb-3 text-xs font-extrabold tracking-wider text-primary/90">
-                  {language === "ar" ? "مميزات" : language === "de" ? "HIGHLIGHTS" : "HIGHLIGHTS"}
+                  {language === "ar" ? "مميزات" : "HIGHLIGHTS"}
                 </p>
 
                 <div className="space-y-2 text-sm text-foreground">
-                  <div className="flex items-center justify-between rounded-xl border border-border/70 bg-background/70 px-3 py-2.5 transition-all hover:border-primary/25 hover:bg-background">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">📺</span>
-                      <span className="font-semibold">
-                        {language === "ar"
-                          ? "اشتراكات رقمية"
-                          : language === "de"
-                          ? "Digitale Abos"
-                          : "Digital subscriptions"}
-                      </span>
+                  {[
+                    { icon: "📺", ar: "اشتراكات رقمية", en: "Digital subscriptions", de: "Digitale Abos" },
+                    { icon: "💸", ar: "أسعار مناسبة", en: "Fair pricing", de: "Faire Preise" },
+                    { icon: "💬", ar: "دعم مباشر", en: "Direct support", de: "Direkter Support" },
+                  ].map((row) => (
+                    <div
+                      key={row.en}
+                      className="flex items-center justify-between rounded-xl border border-border/70 bg-background/70 px-3 py-2.5 transition-all hover:border-primary/25 hover:bg-background"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{row.icon}</span>
+                        <span className="font-semibold">{row[language]}</span>
+                      </div>
+                      <span className="font-bold text-primary">✓</span>
                     </div>
-                    <span className="font-bold text-primary">✓</span>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl border border-border/70 bg-background/70 px-3 py-2.5 transition-all hover:border-primary/25 hover:bg-background">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">💸</span>
-                      <span className="font-semibold">
-                        {language === "ar"
-                          ? "أسعار مناسبة"
-                          : language === "de"
-                          ? "Faire Preise"
-                          : "Fair pricing"}
-                      </span>
-                    </div>
-                    <span className="font-bold text-primary">✓</span>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl border border-border/70 bg-background/70 px-3 py-2.5 transition-all hover:border-primary/25 hover:bg-background">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">💬</span>
-                      <span className="font-semibold">
-                        {language === "ar"
-                          ? "دعم مباشر"
-                          : language === "de"
-                          ? "Direkter Support"
-                          : "Direct support"}
-                      </span>
-                    </div>
-                    <span className="font-bold text-primary">✓</span>
-                  </div>
+                  ))}
                 </div>
               </div>
             </motion.div>
@@ -434,6 +546,7 @@ const Index = () => {
         </motion.div>
       </section>
 
+      {/* PRODUCTS */}
       <section id="products" className="py-24">
         <div className="container mx-auto px-6">
           <motion.div
@@ -442,18 +555,27 @@ const Index = () => {
             viewport={{ once: true }}
             className="mb-14 text-center"
           >
-            <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">{t.products.title}</h2>
-            <p className="text-muted-foreground">{t.products.subtitle}</p>
+            <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">
+              {t.products?.title ?? "Products"}
+            </h2>
+            <p className="text-muted-foreground">{t.products?.subtitle ?? ""}</p>
           </motion.div>
 
           <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((product, i) => (
-              <ProductCard key={product.title.en} product={product} index={i} language={language} />
+            {(products ?? []).map((product, i) => (
+              <ProductCard
+                key={product.slug}
+                product={product}
+                index={i}
+                language={language}
+                viewDetailsLabel={t.products?.viewDetails ?? "View details"}
+              />
             ))}
           </div>
         </div>
       </section>
 
+      {/* PRICING */}
       <section id="pricing" className="py-8 pb-24">
         <div className="container mx-auto px-6">
           <motion.div
@@ -462,14 +584,10 @@ const Index = () => {
             viewport={{ once: true }}
             className="mb-12 text-center"
           >
-            <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">{t.nav.pricing}</h2>
-            <p className="text-muted-foreground">
-              {language === "ar"
-                ? "باقات مرنة تناسب احتياجاتك"
-                : language === "de"
-                ? "Flexible Pakete für deine Bedürfnisse"
-                : "Flexible plans for your needs"}
-            </p>
+            <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">
+              {t.pricing?.title ?? "Plans"}
+            </h2>
+            <p className="text-muted-foreground">{t.pricing?.subtitle ?? ""}</p>
           </motion.div>
 
           <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
@@ -482,10 +600,7 @@ const Index = () => {
                 transition={{ delay: i * 0.08, duration: 0.45 }}
                 className={`pricing-card p-6 ${card.highlight ? "featured" : ""}`}
               >
-                {card.badge && 
-                  <span className="pricing-badge"> {card.badge[language]}
-                  </span>
-                }
+                {card.badge && <span className="pricing-badge">{card.badge[language]}</span>}
 
                 <h3 className="pricing-title">{card.title[language]}</h3>
                 <p className="pricing-desc">{card.description[language]}</p>
@@ -495,11 +610,17 @@ const Index = () => {
                   <span className="pricing-price-period">{card.period[language]}</span>
                 </div>
 
-                <button
-                  type="button"
-                  className={`pricing-btn ${card.highlight ? "featured" : ""}`}
-                >
-                  {language === "ar" ? "اختر الخطة" : language === "de" ? "Plan wählen" : "Choose plan"}
+                <div className="pricing-features">
+                  {card.features[language].map((feature) => (
+                    <div key={feature} className="pricing-feature">
+                      <span className="pricing-feature-dot" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <button type="button" className={`pricing-btn ${card.highlight ? "featured" : ""}`}>
+                  {t.pricing?.choose ?? "Choose plan"}
                 </button>
               </motion.div>
             ))}
@@ -507,6 +628,10 @@ const Index = () => {
         </div>
       </section>
 
+      {/* FAQ */}
+      <FAQSection language={language} />
+
+      {/* CONTACT */}
       <section id="contact" className="pb-20">
         <div className="container mx-auto px-6">
           <motion.div
@@ -515,8 +640,12 @@ const Index = () => {
             viewport={{ once: true }}
             className="mx-auto max-w-4xl glass p-8 text-center"
           >
-            <h2 className="mb-3 text-2xl font-black text-foreground md:text-3xl">{t.contact.title}</h2>
-            <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">{t.contact.subtitle}</p>
+            <h2 className="mb-3 text-2xl font-black text-foreground md:text-3xl">
+              {t.contact?.title ?? "Contact"}
+            </h2>
+            <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">
+              {t.contact?.subtitle ?? ""}
+            </p>
 
             <div className="flex flex-wrap justify-center gap-3">
               <a
@@ -526,17 +655,17 @@ const Index = () => {
                 className="btn-primary interactive-surface inline-flex items-center gap-2"
               >
                 <MessageCircle className="h-4 w-4" />
-                {t.contact.whatsapp}
+                {t.contact?.whatsapp ?? "WhatsApp"}
               </a>
 
               <a
-                href="https://t.me/rivoplus"
+                href="https://t.me/dein_telegram_name"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="interactive-surface inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 font-bold text-foreground hover:bg-muted"
               >
                 <Send className="h-4 w-4" />
-                {t.contact.telegram}
+                {t.contact?.telegram ?? "Telegram"}
               </a>
             </div>
           </motion.div>
@@ -544,7 +673,7 @@ const Index = () => {
       </section>
 
       <footer className="border-t border-border/70 py-6 text-center text-sm text-muted-foreground">
-        <div className="container mx-auto px-6">{t.footer}</div>
+        <div className="container mx-auto px-6">{t.footer ?? "© 2026 Rivo Plus"}</div>
       </footer>
     </motion.div>
   );

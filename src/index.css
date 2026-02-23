@@ -752,3 +752,6 @@
   transform: translateY(-1px);
   box-shadow: 0 16px 28px hsl(var(--primary) / 0.22);
 }
+details summary::-webkit-details-marker {
+  display: none;
+}
