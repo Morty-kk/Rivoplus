@@ -1,5 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const projectRoot = path.resolve(__dirname, '..');
 const logoComponent = path.join('src', 'components', 'Logo'); // no extension
@@ -18,9 +22,9 @@ function walk(dir) {
 const files = walk(projectRoot).filter(f => exts.includes(path.extname(f)));
 const svgRegex = /<svg[\s\S]*?<\/svg>/gi;
 
-files.forEach(file => {
+for (const file of files) {
   let content = fs.readFileSync(file, 'utf8');
-  if (!svgRegex.test(content)) return;
+  if (!svgRegex.test(content)) continue;
 
   // create backup
   fs.copyFileSync(file, file + '.bak');
@@ -46,6 +50,6 @@ files.forEach(file => {
 
   fs.writeFileSync(file, content, 'utf8');
   console.log('Updated:', path.relative(projectRoot, file));
-});
+}
 
 console.log('Done. Backups: *.bak');
