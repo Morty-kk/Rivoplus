@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo_blue_B.png";
 import { copy, products, type Language } from "./index-content";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const getLanguage = (): Language => {
   if (typeof window === "undefined") {
@@ -18,21 +16,11 @@ const getLanguage = (): Language => {
 };
 
 const ProductsPage = () => {
-  const [language, setLanguage] = useState<Language>(getLanguage);
+  const language = getLanguage();
   const t = copy[language];
-
-  useEffect(() => {
-    window.localStorage.setItem("language", language);
-  }, [language]);
 
   return (
     <main className="min-h-screen bg-background px-6 py-16 font-cairo" dir={t.dir}>
-      <LanguageSwitcher
-        language={language}
-        onChange={setLanguage}
-        ariaLabel={t.language.switchAria}
-      />
-
       <div className="container mx-auto max-w-5xl">
         <div className="mb-10 flex items-center justify-between">
           <div className="flex items-center gap-3">

@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo_blue_B.png";
 import { type Language } from "./index-content";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-const pricingCopy: Record<
-  Language,
-  { title: string; subtitle: string; plans: { name: string; price: string; details: string }[] }
-> = {
+const pricingCopy: Record<Language, { title: string; subtitle: string; plans: { name: string; price: string; details: string }[] }> = {
   ar: {
     title: "الأسعار",
     subtitle: "باقات مرنة تناسب احتياجك",
@@ -50,28 +45,12 @@ const getLanguage = (): Language => {
   return "ar";
 };
 
-const languageSwitchAria: Record<Language, string> = {
-  ar: "تبديل اللغة",
-  en: "Switch language",
-  de: "Sprache wechseln",
-};
-
 const PricingPage = () => {
-  const [language, setLanguage] = useState<Language>(getLanguage);
+  const language = getLanguage();
   const t = pricingCopy[language];
-
-  useEffect(() => {
-    window.localStorage.setItem("language", language);
-  }, [language]);
 
   return (
     <main className="min-h-screen bg-background px-6 py-16 font-cairo" dir={language === "ar" ? "rtl" : "ltr"}>
-      <LanguageSwitcher
-        language={language}
-        onChange={setLanguage}
-        ariaLabel={languageSwitchAria[language]}
-      />
-
       <div className="container mx-auto max-w-5xl">
         <div className="mb-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
