@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import logo from "@/assets/logo_blue_B.png";
 
 type RivoLogoProps = {
   className?: string;
@@ -26,7 +27,7 @@ const RivoLogo = ({ className, animated = false }: RivoLogoProps) => {
               : {})}
       >
         <img
-            src="src/assets/logo_blue_B.png"
+            src={logo}
             alt="Rivo Plus logo"
             className="h-full w-full object-contain"
         />
