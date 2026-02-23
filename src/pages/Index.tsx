@@ -1,18 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Play, MessageCircle, Send, Moon, Sun } from "lucide-react";
-import {
-  Play,
-  Tv,
-  Music,
-  Gamepad2,
-  Cloud,
-  ShieldCheck,
-  MessageCircle,
-  Send,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo_blue_B.png";
 import heroBg from "@/assets/hero-bg.jpg";
 
