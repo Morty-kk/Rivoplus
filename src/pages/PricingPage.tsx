@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo_blue_B.png";
+import RivoLogo from "@/components/RivoLogo";
 import { type Language } from "./index-content";
 
 const pricingCopy: Record<Language, { title: string; subtitle: string; plans: { name: string; price: string; details: string }[] }> = {
@@ -54,11 +54,7 @@ const PricingPage = () => {
       <div className="container mx-auto max-w-5xl">
         <div className="mb-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img
-              src={logo}
-              alt="Rivo Plus"
-              className="h-12 w-12 rounded-full border border-border/70 object-cover"
-            />
+            <RivoLogo className="h-12 w-[132px]" />
             <h1 className="text-3xl font-black text-foreground">{t.title}</h1>
           </div>
           <Link to="/" className="rounded-lg border border-border px-4 py-2 text-sm text-foreground">
