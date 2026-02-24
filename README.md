@@ -71,3 +71,27 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Where `/product/stream` comes from (and how to edit it)
+
+If you open `https://rivoplus.vercel.app/product/stream`, this app resolves it using React Router:
+
+- Route definition: `src/App.tsx` has `path="/product/:slug"`.
+- URL param: `src/pages/ProductDetails.tsx` reads `slug` with `useParams()`.
+- Product lookup: the page searches in `products` from `src/pages/index-content.ts`.
+
+So for `/product/stream` specifically:
+
+1. Find the product object with `slug: "stream"` in `src/pages/index-content.ts`.
+2. Edit that object's title/description/badge/icon data to change the card and details content.
+3. Edit layout/styling in:
+   - `src/pages/Index.tsx` (product card on homepage)
+   - `src/pages/ProductDetails.tsx` (details page content)
+
+Quick local test:
+
+```sh
+npm i
+npm run dev
+# then open http://localhost:5173/product/stream
+```
