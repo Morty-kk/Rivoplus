@@ -11,65 +11,6 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
 };
 
-type PricingCard = {
-  title: Record<Language, string>;
-  description: Record<Language, string>;
-  price: Record<Language, string>;
-  period: Record<Language, string>;
-  features: Record<Language, string[]>;
-  badge?: Record<Language, string>;
-  highlight?: boolean;
-};
-
-const pricingCards: PricingCard[] = [
-  {
-    title: { ar: "الخطة الأساسية", en: "Basic Plan", de: "Basic Plan" },
-    description: {
-      ar: "خطة مناسبة للاستخدام الشخصي اليومي",
-      en: "A great plan for everyday personal use",
-      de: "Ein passender Tarif für den täglichen Gebrauch",
-    },
-    price: { ar: "9€", en: "€9", de: "9€" },
-    period: { ar: "/شهرياً", en: "/month", de: "/Monat" },
-    features: {
-      ar: ["بث وموسيقى", "دعم سريع", "تفعيل فوري"],
-      en: ["Streaming & music", "Fast support", "Instant activation"],
-      de: ["Streaming & Musik", "Schneller Support", "Sofort aktiv"],
-    },
-  },
-  {
-    title: { ar: "الخطة المميزة", en: "Premium Plan", de: "Premium Plan" },
-    description: {
-      ar: "أفضل قيمة مع مزايا إضافية وخدمات أكثر",
-      en: "Best value with extra features and more services",
-      de: "Bestes Preis-Leistungs-Verhältnis mit mehr Features",
-    },
-    price: { ar: "19€", en: "€19", de: "19€" },
-    period: { ar: "/شهرياً", en: "/month", de: "/Monat" },
-    badge: { ar: "الأكثر طلباً", en: "Most Popular", de: "Beliebt" },
-    highlight: true,
-    features: {
-      ar: ["كل ميزات الأساسية", "أولوية بالدعم", "خدمات إضافية"],
-      en: ["All basic features", "Priority support", "Extra services"],
-      de: ["Alle Basic-Features", "Prioritäts-Support", "Zusatzservices"],
-    },
-  },
-  {
-    title: { ar: "خطة الأعمال", en: "Business Plan", de: "Business Plan" },
-    description: {
-      ar: "للشركات والفرق مع إدارة أفضل ودعم أقوى",
-      en: "For teams and businesses with advanced support",
-      de: "Für Teams und Unternehmen mit erweitertem Support",
-    },
-    price: { ar: "39€", en: "€39", de: "39€" },
-    period: { ar: "/شهرياً", en: "/month", de: "/Monat" },
-    features: {
-      ar: ["دعم مخصص", "إدارة حسابات", "حلول مرنة"],
-      en: ["Dedicated support", "Account management", "Flexible solutions"],
-      de: ["Dedizierter Support", "Account-Management", "Flexible Lösungen"],
-    },
-  },
-];
 
 const ProductCard = ({
   product,
@@ -183,7 +124,17 @@ const Index = () => {
       {/* NAVBAR */}
       <nav className="fixed top-0 z-50 w-full border-b border-border/70 bg-background/70 backdrop-blur-xl">
         <div className="container mx-auto flex items-center justify-between gap-2 px-3 py-2 md:gap-3 md:px-6 md:py-5">
-          <RivoLogo className="h-7 w-[90px] md:h-16 md:w-[210px]" />
+          <Link to="/" aria-label="Home" className="inline-flex items-center">
+
+            <Link to="/" aria-label="Home" className="inline-flex items-center">
+
+
+              <RivoLogo className="h-7 w-[90px] md:h-16 md:w-[210px]" />
+
+
+            </Link>
+
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex flex-wrap items-center gap-4 text-base font-medium text-muted-foreground">
@@ -445,10 +396,10 @@ const Index = () => {
                 </motion.a>
 
                 <a
-                  href="#pricing"
+                  href="#products"
                   className="interactive-surface inline-flex items-center rounded-lg border border-border bg-background/80 px-5 py-3 font-bold text-foreground hover:bg-muted"
                 >
-                  {t.hero?.plans ?? "Plans"}
+                  {t.nav.products}
                 </a>
               </div>
             </div>
@@ -576,58 +527,7 @@ const Index = () => {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" className="py-8 pb-24">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="mb-12 text-center"
-          >
-            <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">
-              {t.pricing?.title ?? "Plans"}
-            </h2>
-            <p className="text-muted-foreground">{t.pricing?.subtitle ?? ""}</p>
-          </motion.div>
-
-          <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
-            {pricingCards.map((card, i) => (
-              <motion.div
-                key={card.title.en}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.45 }}
-                className={`pricing-card p-6 ${card.highlight ? "featured" : ""}`}
-              >
-                {card.badge && <span className="pricing-badge">{card.badge[language]}</span>}
-
-                <h3 className="pricing-title">{card.title[language]}</h3>
-                <p className="pricing-desc">{card.description[language]}</p>
-
-                <div className="pricing-price">
-                  <span className="pricing-price-value">{card.price[language]}</span>
-                  <span className="pricing-price-period">{card.period[language]}</span>
-                </div>
-
-                <div className="pricing-features">
-                  {card.features[language].map((feature) => (
-                    <div key={feature} className="pricing-feature">
-                      <span className="pricing-feature-dot" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <button type="button" className={`pricing-btn ${card.highlight ? "featured" : ""}`}>
-                  {t.pricing?.choose ?? "Choose plan"}
-                </button>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      
       {/* FAQ */}
       <FAQSection language={language} />
 

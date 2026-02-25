@@ -1,14 +1,25 @@
-import { Gamepad2, Music, Tv } from "lucide-react";
+import { Gamepad2, Music, Sparkles, Tv } from "lucide-react";
 
 export type Language = "ar" | "en" | "de";
+
+export type ProductOffer = {
+  label: Record<Language, string>;
+  discountPercent: number;
+  endsAtISO: string; // yyyy-mm-dd
+};
 
 export type Product = {
   slug: string;
   icon: typeof Tv;
   title: Record<Language, string>;
   description: Record<Language, string>;
+  longDescription: Record<Language, string>;
+  highlights: Record<Language, string[]>;
+  heroImage: string;
+  gallery: string[];
   badge: Record<Language, string> | null;
   featured: boolean;
+  offer: ProductOffer | null;
 };
 
 export const products: Product[] = [
@@ -25,20 +36,79 @@ export const products: Product[] = [
       en: "Stream top series and movies in 4K with exclusive content.",
       de: "Streame Top-Serien und Filme in 4K mit exklusiven Inhalten.",
     },
-    badge: { ar: "الأكثر مبيعاً", en: "Best Seller", de: "Bestseller" },
+    longDescription: {
+      ar: "ريفو بلس ستريم يقدم تجربة مشاهدة فاخرة: مكتبة مُحدّثة باستمرار، جودة عالية، وسهولة استخدام على الهاتف والتلفاز الذكي. مناسب للعائلة مع ملفات تعريف متعددة وتوصيات ذكية.",
+      en: "Rivo Plus Stream delivers a premium viewing experience: a constantly updated library, high quality playback, and a smooth experience across mobile and smart TVs. Great for families with multiple profiles and smart recommendations.",
+      de: "Rivo Plus Stream bietet ein Premium-Seherlebnis: laufend aktualisierte Bibliothek, hohe Qualität und eine reibungslose Nutzung auf Smartphone und Smart-TV. Ideal für Familien mit mehreren Profilen und smarten Empfehlungen.",
+    },
+    highlights: {
+      ar: ["جودة 4K", "ملفات تعريف متعددة", "توصيات ذكية", "تفعيل سريع"],
+      en: ["4K quality", "Multiple profiles", "Smart recommendations", "Fast activation"],
+      de: ["4K-Qualität", "Mehrere Profile", "Smarte Empfehlungen", "Schnelle Aktivierung"],
+    },
+    heroImage: "/products/stream-1.svg",
+    gallery: ["/products/stream-1.svg", "/products/stream-2.svg"],
+    badge: null,
     featured: true,
+    offer: {
+      label: { ar: "عرض رمضان", en: "Ramadan Offer", de: "Ramadan-Angebot" },
+      discountPercent: 25,
+      endsAtISO: "2026-03-31",
+    },
   },
   {
     slug: "music",
     icon: Music,
     title: { ar: "ريفو ميوزك", en: "Rivo Music", de: "Rivo Musik" },
     description: {
-      ar: "ملايين الأغاني والبودكاست بجودة عالية بدون إعلانات",
-      en: "Millions of songs and podcasts in high quality with no ads.",
-      de: "Millionen Songs und Podcasts in hoher Qualität ohne Werbung.",
+      ar: "Spotify و YouTube Premium — موسيقى بجودة عالية بدون إعلانات",
+      en: "Spotify + YouTube Premium — music in high quality with no ads.",
+      de: "Spotify + YouTube Premium — Musik in hoher Qualität ohne Werbung.",
     },
+    longDescription: {
+      ar: "استمع بلا حدود: تشغيل بدون إعلانات، قوائم تشغيل ذكية، وتنزيل للاستماع دون إنترنت. اختر Spotify أو YouTube Premium حسب احتياجك.",
+      en: "Listen without limits: ad‑free playback, smart playlists, and offline downloads. Choose Spotify or YouTube Premium based on your needs.",
+      de: "Hören ohne Limits: werbefreie Wiedergabe, smarte Playlists und Offline-Downloads. Wähle Spotify oder YouTube Premium passend zu deinem Bedarf.",
+    },
+    highlights: {
+      ar: ["بدون إعلانات", "تنزيل دون إنترنت", "قوائم تشغيل", "جودة عالية"],
+      en: ["No ads", "Offline downloads", "Playlists", "High quality"],
+      de: ["Ohne Werbung", "Offline-Downloads", "Playlists", "Hohe Qualität"],
+    },
+    heroImage: "/products/music-1.svg",
+    gallery: ["/products/music-1.svg", "/products/music-2.svg"],
     badge: null,
     featured: false,
+    offer: {
+      label: { ar: "عرض رمضان", en: "Ramadan Offer", de: "Ramadan-Angebot" },
+      discountPercent: 20,
+      endsAtISO: "2026-03-31",
+    },
+  },
+  {
+    slug: "creativity",
+    icon: Sparkles,
+    title: { ar: "ريفو كرييتيفيتي", en: "Rivo Creativity", de: "Rivo Creativity" },
+    description: {
+      ar: "Adobe Creative Cloud و Canva Pro — أدوات تصميم وإبداع",
+      en: "Adobe Creative Cloud + Canva Pro — design & creativity tools.",
+      de: "Adobe Creative Cloud + Canva Pro — Design- & Kreativ-Tools.",
+    },
+    longDescription: {
+      ar: "حل واحد للإبداع: اشتراكات احترافية للتصميم والمونتاج وصناعة المحتوى. اختر Adobe Creative Cloud أو Canva Pro حسب عملك.",
+      en: "One hub for creativity: professional subscriptions for design, editing, and content creation. Choose Adobe Creative Cloud or Canva Pro based on your workflow.",
+      de: "Ein Hub für Kreativität: professionelle Abos für Design, Editing und Content Creation. Wähle Adobe Creative Cloud oder Canva Pro passend zu deinem Workflow.",
+    },
+    highlights: {
+      ar: ["تصميم احترافي", "قوالب جاهزة", "للعمل والدراسة", "تفعيل سريع"],
+      en: ["Pro design", "Ready templates", "Work & study", "Fast activation"],
+      de: ["Pro-Design", "Vorlagen", "Arbeit & Studium", "Schnelle Aktivierung"],
+    },
+    heroImage: "/products/creative-1.svg",
+    gallery: ["/products/creative-1.svg", "/products/creative-2.svg"],
+    badge: null,
+    featured: false,
+    offer: null,
   },
   {
     slug: "games",
@@ -49,8 +119,25 @@ export const products: Product[] = [
       en: "A huge cloud gaming library available on all your devices.",
       de: "Eine große Cloud-Gaming-Bibliothek auf all deinen Geräten.",
     },
-    badge: { ar: "جديد", en: "New", de: "Neu" },
+    longDescription: {
+      ar: "الألعاب في أي مكان: تشغيل سحابي سريع، مكتبة متجددة، ودعم يد التحكم. مناسب للاعبين الذين يريدون الأداء بدون تعقيد.",
+      en: "Games everywhere: fast cloud play, a growing library, and controller support. Perfect for players who want performance without hassle.",
+      de: "Gaming überall: schnelles Cloud-Play, wachsende Bibliothek und Controller-Support. Perfekt für alle, die Leistung ohne Aufwand möchten.",
+    },
+    highlights: {
+      ar: ["زمن استجابة منخفض", "يدعم يد التحكم", "عناوين جديدة", "تشغيل على الأجهزة"],
+      en: ["Low latency", "Controller support", "New titles", "Play on devices"],
+      de: ["Niedrige Latenz", "Controller-Support", "Neue Titel", "Auf Geräten spielen"],
+    },
+    heroImage: "/products/games-1.svg",
+    gallery: ["/products/games-1.svg", "/products/games-2.svg"],
+    badge: null,
     featured: false,
+    offer: {
+      label: { ar: "عرض رمضان", en: "Ramadan Offer", de: "Ramadan-Angebot" },
+      discountPercent: 30,
+      endsAtISO: "2026-03-31",
+    },
   },
 ];
 
@@ -67,17 +154,17 @@ export const copy = {
       titleHighlight: "مكان واحد",
       subtitle: "بث، موسيقى، ألعاب، وأكثر — اكتشف منتجاتنا الرقمية المصممة لك",
       cta: "استكشف الآن",
-      plans: "الخطط",
     },
     products: {
       title: "منتجاتنا",
       subtitle: "اختر ما يناسبك من خدماتنا الرقمية المتنوعة",
       viewDetails: "عرض التفاصيل",
-    },
-    pricing: {
-      title: "الخطط",
-      subtitle: "باقات مرنة تناسب احتياجاتك",
-      choose: "اختر الخطة",
+      quickView: "عرض سريع",
+      openDetails: "فتح صفحة التفاصيل",
+      ramadanTitle: "عرض رمضان",
+      ramadanSubtitle: "خصومات لفترة محدودة — سارع قبل انتهاء العرض",
+      paymentTitle: "طرق الدفع",
+      paymentSubtitle: "يمكنك الدفع عبر PayPal أو بطاقة ائتمان (Visa / Mastercard).",
     },
     faq: {
       title: "الأسئلة الشائعة",
@@ -89,29 +176,28 @@ export const copy = {
         },
         {
           q: "هل الخدمة تعمل على جميع الأجهزة؟",
-          a: "نعم، تعمل على الهواتف، التلفاز الذكي، أجهزة Android TV، والكمبيوتر حسب نوع المنتج.",
+          a: "نعم، تعمل على الهاتف، التلفاز الذكي، أجهزة Android TV، والكمبيوتر.",
         },
         {
           q: "هل يوجد دعم فني؟",
-          a: "نعم، يتوفر دعم سريع لمساعدتك في التفعيل أو أي مشكلة تقنية.",
+          a: "نعم، دعم سريع لمساعدتك في التفعيل وأي استفسار تقني.",
         },
         {
           q: "هل يمكنني تغيير الخطة لاحقاً؟",
-          a: "نعم، يمكنك الترقية أو تغيير الخطة حسب احتياجك.",
+          a: "نعم، يمكنك الترقية أو تغيير الخدمة في أي وقت.",
         },
       ],
     },
     contact: {
       title: "تواصل معنا",
-      subtitle: "نحن هنا لمساعدتك — تواصل معنا عبر قنواتنا المفضلة",
+      subtitle: "نحن جاهزون للمساعدة — اختر وسيلة التواصل المفضلة لديك",
       whatsapp: "واتساب",
       telegram: "تيليجرام",
     },
-    footer: "© 2026 ريفو بلس — جميع الحقوق محفوظة",
-    theme: { switchAria: "تبديل المظهر", light: "فاتح", dark: "داكن" },
-    language: { ar: "العربية", en: "English", de: "Deutsch", switchAria: "تبديل اللغة" },
+    footer: "© 2026 Rivo Plus — جميع الحقوق محفوظة",
+    theme: { switchAria: "تغيير المظهر", light: "فاتح", dark: "داكن" },
+    language: { ar: "العربية", en: "English", de: "Deutsch", switchAria: "تغيير اللغة" },
   },
-
   en: {
     dir: "ltr" as const,
     nav: {
@@ -122,53 +208,52 @@ export const copy = {
     hero: {
       title: "Everything you need in",
       titleHighlight: "one place",
-      subtitle: "Streaming, music, games, and more — discover our digital products.",
+      subtitle: "Streaming, music, games, and more — explore our digital products built for you.",
       cta: "Explore now",
-      plans: "Plans",
     },
     products: {
       title: "Our Products",
-      subtitle: "Choose what fits you from our diverse digital services",
+      subtitle: "Pick the service that matches your lifestyle.",
       viewDetails: "View details",
-    },
-    pricing: {
-      title: "Plans",
-      subtitle: "Flexible plans for your needs",
-      choose: "Choose plan",
+      quickView: "Quick view",
+      openDetails: "Open details page",
+      ramadanTitle: "Ramadan Offer",
+      ramadanSubtitle: "Limited-time discounts — don’t miss out.",
+      paymentTitle: "Payment methods",
+      paymentSubtitle: "Pay securely via PayPal or credit card (Visa / Mastercard).",
     },
     faq: {
       title: "FAQ",
-      subtitle: "Common questions from customers",
+      subtitle: "Answers to common questions",
       items: [
         {
           q: "How does activation work?",
-          a: "Activation is usually instant after confirmation, and we send details via WhatsApp or Telegram.",
+          a: "Activation is confirmed right after your order, and you’ll receive details via WhatsApp or Telegram.",
         },
         {
           q: "Does it work on all devices?",
-          a: "Yes, depending on the product, it supports phones, smart TVs, Android TV devices, and desktop.",
+          a: "Yes — phone, Smart TV, Android TV devices, and computers.",
         },
         {
-          q: "Do you provide support?",
-          a: "Yes, fast support is available for activation and technical help.",
+          q: "Do you offer support?",
+          a: "Yes, fast support for activation and technical questions.",
         },
         {
-          q: "Can I change the plan later?",
-          a: "Yes, you can upgrade or change your plan based on your needs.",
+          q: "Can I change later?",
+          a: "Yes, you can upgrade or change anytime.",
         },
       ],
     },
     contact: {
-      title: "Contact Us",
-      subtitle: "We are here to help — reach us on your favorite channel",
+      title: "Contact",
+      subtitle: "We’re happy to help — choose your preferred channel",
       whatsapp: "WhatsApp",
       telegram: "Telegram",
     },
     footer: "© 2026 Rivo Plus — All rights reserved",
     theme: { switchAria: "Toggle theme", light: "Light", dark: "Dark" },
-    language: { ar: "العربية", en: "English", de: "Deutsch", switchAria: "Switch language" },
+    language: { ar: "العربية", en: "English", de: "Deutsch", switchAria: "Change language" },
   },
-
   de: {
     dir: "ltr" as const,
     nav: {
@@ -177,52 +262,52 @@ export const copy = {
       contact: "Kontakt",
     },
     hero: {
-      title: "Alles, was du brauchst, an",
+      title: "Alles, was du brauchst an",
       titleHighlight: "einem Ort",
-      subtitle: "Streaming, Musik, Games und mehr — entdecke unsere digitalen Produkte.",
+      subtitle: "Streaming, Musik, Games & mehr — entdecke unsere digitalen Produkte.",
       cta: "Jetzt entdecken",
-      plans: "Pakete",
     },
     products: {
       title: "Unsere Produkte",
-      subtitle: "Wähle aus unseren vielfältigen digitalen Services",
+      subtitle: "Wähle den Service, der zu dir passt.",
       viewDetails: "Details ansehen",
-    },
-    pricing: {
-      title: "Pakete",
-      subtitle: "Flexible Pakete für deine Bedürfnisse",
-      choose: "Plan wählen",
+      quickView: "Schnellansicht",
+      openDetails: "Detailseite öffnen",
+      ramadanTitle: "Ramadan-Angebot",
+      ramadanSubtitle: "Zeitlich begrenzte Rabatte — nicht verpassen.",
+      paymentTitle: "Zahlungsmethoden",
+      paymentSubtitle: "Sicher bezahlen mit PayPal oder Kreditkarte (Visa / Mastercard).",
     },
     faq: {
       title: "FAQ",
-      subtitle: "Häufige Fragen unserer Kunden",
+      subtitle: "Häufige Fragen",
       items: [
         {
-          q: "Wie funktioniert die Aktivierung?",
-          a: "Die Aktivierung erfolgt in der Regel sofort nach Bestätigung. Die Daten senden wir per WhatsApp oder Telegram.",
+          q: "Wie läuft die Aktivierung?",
+          a: "Direkt nach deiner Bestellung — du bekommst die Details per WhatsApp oder Telegram.",
         },
         {
           q: "Funktioniert es auf allen Geräten?",
-          a: "Ja, je nach Produkt auf Smartphone, Smart TV, Android TV-Geräten und Computer.",
+          a: "Ja — Handy, Smart TV, Android TV und PC.",
         },
         {
           q: "Gibt es Support?",
-          a: "Ja, wir bieten schnellen Support für Aktivierung und technische Fragen.",
+          a: "Ja, schneller Support bei Aktivierung und Fragen.",
         },
         {
-          q: "Kann ich später den Tarif wechseln?",
-          a: "Ja, du kannst deinen Tarif später upgraden oder ändern.",
+          q: "Kann ich später wechseln?",
+          a: "Ja, Upgrade oder Wechsel jederzeit möglich.",
         },
       ],
     },
     contact: {
       title: "Kontakt",
-      subtitle: "Wir helfen dir gerne — kontaktiere uns über deinen Lieblingskanal",
+      subtitle: "Wir helfen dir gerne — wähle deinen Kanal",
       whatsapp: "WhatsApp",
       telegram: "Telegram",
     },
     footer: "© 2026 Rivo Plus — Alle Rechte vorbehalten",
-    theme: { switchAria: "Design wechseln", light: "Hell", dark: "Dunkel" },
+    theme: { switchAria: "Theme wechseln", light: "Hell", dark: "Dunkel" },
     language: { ar: "العربية", en: "English", de: "Deutsch", switchAria: "Sprache wechseln" },
   },
 };
