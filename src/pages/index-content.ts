@@ -58,14 +58,14 @@ export const products: Product[] = [
       en: ["4K quality", "Multiple profiles", "Smart recommendations", "Fast activation"],
       de: ["4K-Qualität", "Mehrere Profile", "Smarte Empfehlungen", "Schnelle Aktivierung"],
     },
-    heroImage: "/products/stream-1.svg",
+    heroImage: "/products/IPTV_Logo.jpg",
     heroImageLayout: {
       mobileHeightPx: 420,
       desktopHeightPx: 520,
       fit: "contain",
       position: "center",
     },
-    gallery: ["/products/stream-1.svg", "/products/stream-2.svg"],
+    gallery: ["/products/IPTV_Logo.jpg", "/products/stream-2.svg"],
     badge: null,
     featured: true,
     offer: {
