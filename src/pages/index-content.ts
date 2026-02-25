@@ -15,7 +15,19 @@ export type Product = {
   description: Record<Language, string>;
   longDescription: Record<Language, string>;
   highlights: Record<Language, string[]>;
+  /** Place image files in /public/products and reference them like /products/your-image.webp */
   heroImage: string;
+  /**
+   * Tune hero image sizing on the product details page.
+   * - mobileHeightPx is prioritized for phones.
+   * - desktopHeightPx controls larger screens.
+   */
+  heroImageLayout?: {
+    mobileHeightPx: number;
+    desktopHeightPx: number;
+    fit?: "cover" | "contain";
+    position?: string;
+  };
   gallery: string[];
   badge: Record<Language, string> | null;
   featured: boolean;
@@ -47,6 +59,12 @@ export const products: Product[] = [
       de: ["4K-Qualität", "Mehrere Profile", "Smarte Empfehlungen", "Schnelle Aktivierung"],
     },
     heroImage: "/products/stream-1.svg",
+    heroImageLayout: {
+      mobileHeightPx: 420,
+      desktopHeightPx: 520,
+      fit: "contain",
+      position: "center",
+    },
     gallery: ["/products/stream-1.svg", "/products/stream-2.svg"],
     badge: null,
     featured: true,

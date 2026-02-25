@@ -144,6 +144,13 @@ export default function ProductDetails() {
     creativity: { value: creativityValue, prices: creativityPrices },
   });
 
+  const heroLayout = product.heroImageLayout ?? {
+    mobileHeightPx: 320,
+    desktopHeightPx: 480,
+    fit: "cover" as const,
+    position: "center",
+  };
+
   return (
     <div dir={t.dir} className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-6 py-8">
@@ -160,11 +167,21 @@ export default function ProductDetails() {
 
         <div className="glass overflow-hidden rounded-2xl border border-border">
           <div className="grid gap-0 lg:grid-cols-2">
-            <div className="relative border-b border-border lg:border-b-0 lg:border-r">
+            <div
+              className="relative overflow-hidden border-b border-border min-h-[var(--hero-mobile-h)] lg:min-h-[var(--hero-desktop-h)] lg:border-b-0 lg:border-r"
+              style={{
+                ["--hero-mobile-h" as string]: `${heroLayout.mobileHeightPx}px`,
+                ["--hero-desktop-h" as string]: `${heroLayout.desktopHeightPx}px`,
+              }}
+            >
               <img
                 src={product.heroImage}
                 alt={product.title[language]}
-                className="h-full w-full object-cover"
+                className="h-full w-full min-h-[var(--hero-mobile-h)] lg:min-h-[var(--hero-desktop-h)]"
+                style={{
+                  objectFit: heroLayout.fit ?? "cover",
+                  objectPosition: heroLayout.position ?? "center",
+                }}
                 loading="lazy"
               />
               <div className="absolute left-4 top-4 flex items-center gap-2">
