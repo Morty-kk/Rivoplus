@@ -145,7 +145,7 @@ export default function ProductDetails() {
   });
 
   const heroLayout = product.heroImageLayout ?? {
-    mobileHeightPx: 320,
+    mobileHeightPx: 340,
     desktopHeightPx: 480,
     fit: "cover" as const,
     position: "center",
@@ -153,115 +153,117 @@ export default function ProductDetails() {
 
   return (
     <div dir={t.dir} className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto px-6 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <RivoLogo className="h-10 w-[130px] md:h-14 md:w-[180px]" />
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
+        <div className="mb-4 md:mb-6 flex items-center justify-between gap-3">
+          <RivoLogo className="h-8 md:h-10 w-[100px] md:w-[130px] lg:h-14 lg:w-[180px]" />
           <Link
             to="/#products"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-background/40 px-4 py-2 text-sm font-semibold backdrop-blur-md hover:bg-muted/40"
+            className="inline-flex items-center gap-2 rounded-lg md:rounded-xl border border-border bg-background/40 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold backdrop-blur-md hover:bg-muted/40 flex-shrink-0"
           >
-            <ArrowIcon className="h-4 w-4" />
+            <ArrowIcon className="h-3 w-3 md:h-4 md:w-4" />
             {language === "ar" ? "العودة" : language === "de" ? "Zurück" : "Back"}
           </Link>
         </div>
 
         <div className="glass overflow-hidden rounded-2xl border border-border">
-          <div className="grid gap-0 lg:grid-cols-2">
+          <div className="grid gap-0 grid-cols-1 lg:grid-cols-2">
+            {/* IMAGE SECTION */}
             <div
-              className="relative overflow-hidden border-b border-border min-h-[var(--hero-mobile-h)] lg:min-h-[var(--hero-desktop-h)] lg:border-b-0 lg:border-r"
+              className="relative overflow-hidden border-b border-border lg:border-b-0 lg:border-r flex items-center justify-center bg-gradient-to-br from-background to-background/80"
               style={{
-                ["--hero-mobile-h" as string]: `${heroLayout.mobileHeightPx}px`,
-                ["--hero-desktop-h" as string]: `${heroLayout.desktopHeightPx}px`,
+                aspectRatio: "1 / 1",
               }}
             >
-              <img
-                src={product.heroImage}
-                alt={product.title[language]}
-                className="h-full w-full min-h-[var(--hero-mobile-h)] lg:min-h-[var(--hero-desktop-h)]"
-                style={{
-                  objectFit: heroLayout.fit ?? "cover",
-                  objectPosition: heroLayout.position ?? "center",
-                }}
-                loading="lazy"
-              />
-              <div className="absolute left-4 top-4 flex items-center gap-2">
-                {product.badge ? <Badge variant="secondary">{product.badge[language]}</Badge> : null}
+              <div className="w-full h-full flex items-center justify-center p-4 md:p-8">
+                <img
+                  src={product.heroImage}
+                  alt={product.title[language]}
+                  className="max-w-full max-h-full w-auto h-auto object-contain"
+                  style={{
+                    objectFit: "contain",
+                    objectPosition: "center",
+                  }}
+                  loading="lazy"
+                />
+              </div>
+              <div className="absolute left-2 top-2 md:left-4 md:top-4 flex items-center gap-2">
+                {product.badge ? <Badge variant="secondary" className="text-xs md:text-sm">{product.badge[language]}</Badge> : null}
                 {product.offer ? (
-                  <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Badge className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs md:text-sm">
                     {product.offer.label[language]} • -{product.offer.discountPercent}%
                   </Badge>
                 ) : null}
               </div>
             </div>
 
-            <div className="p-6 md:p-8">
-              <div className="mb-4 flex items-start gap-4">
-                <div className="product-card-icon-wrap">
-                  <product.icon className="h-6 w-6 text-primary" />
+            {/* CONTENT SECTION */}
+            <div className="p-5 md:p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto">
+              <div className="flex items-start gap-3 md:gap-4">
+                <div className="product-card-icon-wrap mt-0.5 flex-shrink-0">
+                  <product.icon className="h-6 w-6 md:h-7 md:w-7 text-primary" />
                 </div>
-                <div>
-                  <h1 className="text-3xl font-black md:text-4xl">{product.title[language]}</h1>
-                  <p className="mt-2 text-muted-foreground">{product.description[language]}</p>
+                <div className="min-w-0">
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-black break-words">{product.title[language]}</h1>
+                  <p className="mt-1.5 text-sm md:text-base text-muted-foreground leading-relaxed">{product.description[language]}</p>
                 </div>
               </div>
 
-              <div className="mt-6 space-y-6">
-                <section>
-                  <h2 className="mb-2 text-base font-extrabold">{i18n.details[language]}</h2>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{product.longDescription[language]}</p>
+              <div className="space-y-4">
+                <section className="rounded-lg border border-border/50 bg-background/40 p-3 md:p-4 backdrop-blur">
+                  <h2 className="text-sm md:text-base font-bold text-foreground mb-2">{i18n.details[language]}</h2>
+                  <p className="text-xs md:text-sm leading-relaxed text-muted-foreground">{product.longDescription[language]}</p>
                 </section>
 
                 <section>
-                  <h2 className="mb-2 text-base font-extrabold">{i18n.highlights[language]}</h2>
-                  <ul className="grid gap-2 sm:grid-cols-2">
+                  <h2 className="text-sm md:text-base font-bold text-foreground mb-3">{i18n.highlights[language]}</h2>
+                  <ul className="grid gap-2 grid-cols-2">
                     {product.highlights[language].map((item) => (
                       <li
                         key={item}
-                        className="rounded-xl border border-border bg-background/60 px-3 py-2 text-sm text-foreground backdrop-blur-md"
+                        className="rounded-lg border border-border/60 bg-gradient-to-br from-primary/5 to-background/60 px-3 py-2 text-xs md:text-sm font-medium text-foreground text-center backdrop-blur"
                       >
                         {item}
                       </li>
                     ))}
                   </ul>
-
                   {product.slug === "stream" ? (
-                    <div className="mt-4">
+                    <div>
                       <TvPlanSelector value={tvValue} onChange={setTvValue} prices={tvPrices} planMeta={tvMeta} language={language} />
                     </div>
                   ) : null}
 
                   {product.slug === "music" ? (
-                    <div className="mt-4">
+                    <div>
                       <MusicPlanSelector value={musicValue} onChange={setMusicValue} prices={musicPrices} language={language} />
                     </div>
                   ) : null}
 
                   {product.slug === "creativity" ? (
-                    <div className="mt-4">
+                    <div>
                       <CreativityPlanSelector value={creativityValue} onChange={setCreativityValue} prices={creativityPrices} language={language} />
                     </div>
                   ) : null}
                 </section>
 
-                <section>
-                  <h2 className="mb-2 text-base font-extrabold">{t.products.paymentTitle}</h2>
-                  <p className="mb-3 text-sm text-muted-foreground">{t.products.paymentSubtitle}</p>
-                  <PaymentMethods size="md" />
+                <section className="rounded-lg border border-primary/30 bg-gradient-to-br from-primary/10 to-background/60 p-3.5 md:p-4 backdrop-blur">
+                  <h2 className="text-sm md:text-base font-bold text-foreground mb-2">{t.products.paymentTitle}</h2>
+                  <p className="text-xs md:text-sm text-muted-foreground mb-3">{t.products.paymentSubtitle}</p>
+                  <PaymentMethods size="sm" />
                 </section>
 
-                <section className="rounded-2xl border border-border bg-background/60 p-4 backdrop-blur-md">
-                  <h2 className="mb-2 text-base font-extrabold">{i18n.orderNow[language]}</h2>
-                  <p className="mb-4 text-sm text-muted-foreground">{i18n.orderText[language]}</p>
+                <section className="rounded-lg border border-primary/40 bg-gradient-to-br from-primary/15 to-background/50 p-3.5 md:p-4 backdrop-blur">
+                  <h2 className="text-sm md:text-base font-bold text-foreground mb-1.5">{i18n.orderNow[language]}</h2>
+                  <p className="text-xs md:text-sm text-muted-foreground mb-3">{i18n.orderText[language]}</p>
 
                   <OrderLinks
                     whatsappPhoneE164={WHATSAPP_PHONE}
                     telegramUsername={TELEGRAM_USERNAME}
                     whatsappMessage={orderMessage}
-                    className="flex flex-wrap gap-3"
+                    className="flex flex-wrap gap-2 md:gap-3"
                   />
 
                   {product.offer ? (
-                    <p className="mt-4 text-xs text-muted-foreground">
+                    <p className="mt-2.5 text-xs text-muted-foreground">
                       {language === "ar"
                         ? `ينتهي العرض بتاريخ ${product.offer.endsAtISO}`
                         : language === "de"
@@ -272,14 +274,14 @@ export default function ProductDetails() {
                 </section>
 
                 <section>
-                  <h2 className="mb-3 text-base font-extrabold">{i18n.gallery[language]}</h2>
-                  <div className="flex gap-3 overflow-x-auto pb-2">
+                  <h2 className="text-sm md:text-base font-bold text-foreground mb-3">{i18n.gallery[language]}</h2>
+                  <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 -mx-5 md:-mx-6 lg:-mx-8 px-5 md:px-6 lg:px-8">
                     {product.gallery.map((srcImg) => (
                       <img
                         key={srcImg}
                         src={srcImg}
                         alt={product.title[language]}
-                        className="h-28 w-44 shrink-0 rounded-xl border border-border object-cover"
+                        className="h-24 w-32 md:h-28 md:w-44 shrink-0 rounded-lg border border-border object-cover"
                         loading="lazy"
                       />
                     ))}
@@ -290,7 +292,7 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        <div className="mt-10 text-center text-sm text-muted-foreground">{t.footer}</div>
+        <div className="mt-6 md:mt-10 text-center text-xs md:text-sm text-muted-foreground py-6">{t.footer}</div>
       </div>
     </div>
   );

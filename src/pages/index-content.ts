@@ -60,8 +60,8 @@ export const products: Product[] = [
     },
     heroImage: "/products/IPTV_Logo.jpg",
     heroImageLayout: {
-      mobileHeightPx: 420,
-      desktopHeightPx: 520,
+      mobileHeightPx: 340,
+      desktopHeightPx: 500,
       fit: "contain",
       position: "center",
     },
