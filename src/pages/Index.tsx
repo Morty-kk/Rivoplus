@@ -549,7 +549,7 @@ const Index = () => {
 
             <div className="flex flex-wrap justify-center gap-3">
               <a
-                href="https://wa.me/491234567890"
+                href="https://wa.me/963980582206"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary interactive-surface inline-flex items-center gap-2"
