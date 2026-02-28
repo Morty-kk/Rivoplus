@@ -119,12 +119,24 @@ export default function TvPlanSelector({
 
       <div className="space-y-2">
         <div className="text-sm font-semibold">{i18n.duration[language]}</div>
-        <AnimatedPillGroup
-          value={String(value.duration)}
-          ariaLabel={i18n.duration[language]}
-          onChange={(k) => onChange({ ...value, duration: Number(k) as TvDurationMonths })}
-          options={DURATIONS.map((d) => ({ key: String(d), label: `${d}${i18n.monthsShort[language]}` }))}
-        />
+        {/* native dropdown hides other durations until opened */}
+        <select
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+          value={value.duration}
+          aria-label={i18n.duration[language]}
+          onChange={(e) =>
+            onChange({
+              ...value,
+              duration: Number(e.target.value) as TvDurationMonths,
+            })
+          }
+        >
+          {DURATIONS.map((d) => (
+            <option key={d} value={d}>
+              {d}{i18n.monthsShort[language]}
+            </option>
+          ))}
+        </select>
         <div className="text-xs text-muted-foreground">{i18n.requestHint[language]}</div>
       </div>
 

@@ -15,6 +15,12 @@ type Props = {
   ariaLabel: string;
   className?: string;
   buttonClassName?: string;
+  /**
+   * Allow pills to wrap to multiple rows instead of forcing a single
+   * horizontal line with scrolling. When `true` overflow-x-auto is
+   * removed and flex-wrap is applied.
+   */
+  wrap?: boolean;
 };
 
 /**
@@ -27,6 +33,7 @@ export default function AnimatedPillGroup({
   ariaLabel,
   className,
   buttonClassName,
+  wrap = false,
 }: Props) {
   const selectedIndex = Math.max(
     0,
@@ -38,7 +45,10 @@ export default function AnimatedPillGroup({
       role="radiogroup"
       aria-label={ariaLabel}
       className={cn(
-        "relative inline-flex w-full flex-nowrap gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] rounded-2xl border border-border bg-background/40 p-2 backdrop-blur-md",
+        "relative inline-flex w-full gap-2 rounded-2xl border border-border bg-background/40 p-2 backdrop-blur-md",
+        wrap
+          ? "flex-wrap"
+          : "flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none]",
         className,
       )}
     >

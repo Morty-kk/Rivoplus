@@ -40,6 +40,36 @@ export default function ProductDetails() {
   const t = copy[language];
   const product = products.find((p) => p.slug === slug);
 
+  // when the games product is selected we don’t show the normal detail page;
+  // instead render a simple “coming soon” screen in the site’s theme.
+  if (slug === "games") {
+    const msg =
+      language === "ar"
+        ? "هذا القسم سيأتي قريباً"
+        : language === "de"
+        ? "Dieser Bereich kommt bald"
+        : "This section is coming soon";
+
+    return (
+      <div
+        dir={t.dir}
+        className="min-h-screen flex flex-col items-center justify-center bg-blue-900 text-white"
+      >
+        <RivoLogo className="mb-8 text-5xl" />
+        <h1 className="text-4xl font-bold">
+          {language === "ar" ? "قريباً" : language === "de" ? "Kommt bald" : "Coming soon"}
+        </h1>
+        <p className="mt-4 text-lg text-center max-w-md">{msg}</p>
+        <Link
+          to="/"
+          className="mt-6 inline-block rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+        >
+          {i18n.backToHome[language]}
+        </Link>
+      </div>
+    );
+  }
+
   const [tvValue, setTvValue] = React.useState<TvPlanSelectorValue>({
     plan: "gold",
     duration: 12,
@@ -106,8 +136,8 @@ export default function ProductDetails() {
 
   const creativityPrices: CreativityPrices = React.useMemo(
     () => ({
-      adobe: { 1: 18, 3: 45, 6: 80, 12: 140 },
-      canva: { 1: 10, 3: 25, 6: 45, 12: 80 },
+      adobe: { 12: 50 },
+      canva: { 12: 5 },
     }),
     [],
   );

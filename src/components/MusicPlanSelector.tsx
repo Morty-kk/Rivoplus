@@ -8,32 +8,26 @@ export type SpotifyTier = "premium" | "duo";
 export type YoutubeTier = "premium";
 export type MusicTier = SpotifyTier | YoutubeTier;
 
-export type MusicDurationMonths = 1 | 3 | 6 | 12 | "trial24h";
+export type MusicDurationMonths = 12;
 
 export type MusicSelectorValue = {
   service: MusicService;
   tier: MusicTier;
-  durationMonths: MusicDurationMonths;
+  durationMonths: MusicDurationMonths; // always 12
 };
 
 export type MusicPrices = {
-  trial24h?: number;
-  spotify: Partial<Record<SpotifyTier, Partial<Record<MusicDurationMonths, number>>>>;
-  youtube: Partial<Record<YoutubeTier, Partial<Record<MusicDurationMonths, number>>>>;
+  spotify: Partial<Record<SpotifyTier, number>>; // only 12-month price
+  youtube: Partial<Record<YoutubeTier, number>>;
 };
 
 export function getMusicPrice(prices: MusicPrices, v: MusicSelectorValue): number | null {
-  if (v.durationMonths === "trial24h") {
-    return typeof prices.trial24h === "number" ? prices.trial24h : 0;
-  }
-
+  const tier = v.tier === "duo" ? "duo" : "premium";
   if (v.service === "spotify") {
-    const tier = v.tier === "duo" ? "duo" : "premium";
-    const amount = prices.spotify?.[tier]?.[v.durationMonths];
+    const amount = prices.spotify?.[tier];
     return typeof amount === "number" ? amount : null;
   }
-
-  const amount = prices.youtube?.premium?.[v.durationMonths];
+  const amount = prices.youtube?.premium;
   return typeof amount === "number" ? amount : null;
 }
 
@@ -45,7 +39,6 @@ type Props = {
   currency?: string;
 };
 
-const DURATIONS: MusicDurationMonths[] = ["trial24h", 1, 3, 6, 12];
 
 const i18n = {
   title: { ar: "الموسيقى", en: "Music", de: "Musik" },
@@ -53,7 +46,6 @@ const i18n = {
   plan: { ar: "الخطة", en: "Plan", de: "Plan" },
   duration: { ar: "المدة", en: "Duration", de: "Laufzeit" },
   monthsShort: { ar: "ش", en: "M", de: "M" },
-  trial24h: { ar: "تجربة 24 ساعة", en: "24h trial", de: "24h Test" },
   onRequest: { ar: "حسب الطلب", en: "On request", de: "Auf Anfrage" },
   tiers: {
     premium: { ar: "بريميوم", en: "Premium", de: "Premium" },
@@ -121,13 +113,10 @@ export default function MusicPlanSelector({ value, onChange, prices, language, c
         <div>
           <div className="mb-2 text-xs font-bold text-muted-foreground">{i18n.duration[language]}</div>
           <AnimatedPillGroup
-            value={String(value.durationMonths)}
+            value="12"
             ariaLabel={i18n.duration[language]}
-            onChange={(k) => onChange({ ...value, durationMonths: Number(k) as MusicDurationMonths })}
-            options={DURATIONS.map((d) => ({
-              key: String(d),
-              label: d === "trial24h" ? i18n.trial24h[language] : `${d}${i18n.monthsShort[language]}`,
-            }))}
+            onChange={() => {}}
+            options={[{ key: "12", label: `12${i18n.monthsShort[language]}` }]}
           />
         </div>
       </div>

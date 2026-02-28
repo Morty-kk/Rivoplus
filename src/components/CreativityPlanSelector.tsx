@@ -6,7 +6,7 @@ import type { Language } from "@/pages/index-content";
 export type CreativityService = "adobe" | "canva";
 export type CreativityTier = "pro";
 
-export type CreativityDurationMonths = 1 | 3 | 6 | 12;
+export type CreativityDurationMonths = 12;
 
 export type CreativitySelectorValue = {
   service: CreativityService;
@@ -29,7 +29,7 @@ type Props = {
   currency?: string;
 };
 
-const DURATIONS: CreativityDurationMonths[] = [1, 3, 6, 12];
+const DURATIONS: CreativityDurationMonths[] = [12];
 
 const i18n = {
   title: { ar: "الإبداع", en: "Creativity", de: "Creativity" },
@@ -76,6 +76,7 @@ export default function CreativityPlanSelector({
         <div>
           <div className="mb-2 text-xs font-bold text-muted-foreground">{i18n.duration[language]}</div>
           <AnimatedPillGroup
+            wrap
             value={String(value.durationMonths)}
             ariaLabel={i18n.duration[language]}
             onChange={(k) => onChange({ ...value, durationMonths: Number(k) as CreativityDurationMonths })}
