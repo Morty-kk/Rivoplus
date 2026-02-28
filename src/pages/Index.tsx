@@ -97,6 +97,9 @@ const getInitialLanguage = (): Language => {
 };
 
 const Index = () => {
+  // configure this to the WhatsApp URL you want the trial button to open
+  const WHATSAPP_TRIAL_LINK = "https://wa.me/963980582206?text=I%20want%20the%2024h%20trial";
+
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -386,13 +389,19 @@ const Index = () => {
 
               <div className="flex flex-wrap items-center gap-3">
                 <motion.a
-                  href="#products"
+                  href={WHATSAPP_TRIAL_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.04, y: -2 }}
                   whileTap={{ scale: 0.97 }}
                   className="btn-primary fancy-btn interactive-surface"
                 >
                   <Play className="h-5 w-5" />
-                  {t.hero?.cta ?? "Explore now"}
+                  {language === "ar"
+                    ? "تجربة 24 ساعة"
+                    : language === "de"
+                    ? "24h Test"
+                    : "24h trial"}
                 </motion.a>
 
                 <a
