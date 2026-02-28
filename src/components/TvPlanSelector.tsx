@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import AnimatedPillGroup from "@/components/AnimatedPillGroup";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Language } from "@/pages/index-content";
 
@@ -119,24 +120,27 @@ export default function TvPlanSelector({
 
       <div className="space-y-2">
         <div className="text-sm font-semibold">{i18n.duration[language]}</div>
-        {/* native dropdown hides other durations until opened */}
-        <select
-          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-          value={value.duration}
-          aria-label={i18n.duration[language]}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              duration: Number(e.target.value) as TvDurationMonths,
-            })
-          }
-        >
-          {DURATIONS.map((d) => (
-            <option key={d} value={d}>
-              {d}{i18n.monthsShort[language]}
-            </option>
-          ))}
-        </select>
+        {/* native dropdown hides other durations until opened; add custom arrow for visibility */}
+        <div className="relative">
+          <select
+            className="w-full appearance-none rounded-md border border-border bg-background px-3 py-2 pr-10 text-sm"
+            value={value.duration}
+            aria-label={i18n.duration[language]}
+            onChange={(e) =>
+              onChange({
+                ...value,
+                duration: Number(e.target.value) as TvDurationMonths,
+              })
+            }
+          >
+            {DURATIONS.map((d) => (
+              <option key={d} value={d}>
+                {d}{i18n.monthsShort[language]}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        </div>
         <div className="text-xs text-muted-foreground">{i18n.requestHint[language]}</div>
       </div>
 
