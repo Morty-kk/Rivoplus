@@ -6,6 +6,7 @@ import musicPic from "../assets/music_pic.png";
 import gamingPic from "../assets/gaming_pic.png";
 import creativityPic from "../assets/creativity_pic.png";
 import tvPic from "../assets/tv_pic.png";
+import tfs from "../assets/247_pic.png";
 
 export type Language = "ar" | "en" | "de";
 
@@ -73,7 +74,7 @@ export const products: Product[] = [
       fit: "contain",
       position: "center",
     },
-    gallery: [tvPic, "/products/stream-2.svg"],
+    gallery: [tvPic, tfs],
     badge: null,
     featured: true,
     offer: {
@@ -102,7 +103,7 @@ export const products: Product[] = [
       de: ["Ohne Werbung", "Offline-Downloads", "Playlists", "Hohe Qualität"],
     },
     heroImage: musicPic,
-    gallery: [musicPic, "/products/music-2.svg"],
+    gallery: [musicPic, tfs],
     badge: null,
     featured: false,
     offer: {
@@ -131,7 +132,7 @@ export const products: Product[] = [
       de: ["Pro-Design", "Vorlagen", "Arbeit & Studium", "Schnelle Aktivierung"],
     },
     heroImage: creativityPic,
-    gallery: [creativityPic, "/products/creative-2.svg"],
+    gallery: [creativityPic, tfs],
     badge: null,
     featured: false,
     offer: null,
@@ -156,7 +157,7 @@ export const products: Product[] = [
       de: ["Niedrige Latenz", "Controller-Support", "Neue Titel", "Auf Geräten spielen"],
     },
     heroImage: gamingPic,
-    gallery: [gamingPic, "/products/games-2.svg"],
+    gallery: [gamingPic, tfs],
     badge: null,
     featured: false,
     offer: {
