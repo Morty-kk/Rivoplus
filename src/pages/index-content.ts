@@ -1,5 +1,12 @@
 import { Gamepad2, Music, Sparkles, Tv } from "lucide-react";
 
+// image assets imported from src so we can keep the files where you added them
+import IPTVLogo from "../assets/IPTV_Logo.jpg";
+import musicPic from "../assets/music_pic.png";
+import gamingPic from "../assets/gaming_pic.png";
+import creativityPic from "../assets/creativity_pic.png";
+import tvPic from "../assets/tv_pic.png";
+
 export type Language = "ar" | "en" | "de";
 
 export type ProductOffer = {
@@ -58,14 +65,15 @@ export const products: Product[] = [
       en: ["4K quality", "Multiple profiles", "Smart recommendations", "Fast activation"],
       de: ["4K-Qualität", "Mehrere Profile", "Smarte Empfehlungen", "Schnelle Aktivierung"],
     },
-    heroImage: "/products/IPTV_Logo.jpg",
+    // use the imported tvPic instead of the old logo file
+    heroImage: tvPic,
     heroImageLayout: {
       mobileHeightPx: 340,
       desktopHeightPx: 500,
       fit: "contain",
       position: "center",
     },
-    gallery: ["/products/IPTV_Logo.jpg", "/products/stream-2.svg"],
+    gallery: [tvPic, "/products/stream-2.svg"],
     badge: null,
     featured: true,
     offer: {
@@ -93,8 +101,8 @@ export const products: Product[] = [
       en: ["No ads", "Offline downloads", "Playlists", "High quality"],
       de: ["Ohne Werbung", "Offline-Downloads", "Playlists", "Hohe Qualität"],
     },
-    heroImage: "/products/music-1.svg",
-    gallery: ["/products/music-1.svg", "/products/music-2.svg"],
+    heroImage: musicPic,
+    gallery: [musicPic, "/products/music-2.svg"],
     badge: null,
     featured: false,
     offer: {
@@ -122,8 +130,8 @@ export const products: Product[] = [
       en: ["Pro design", "Ready templates", "Work & study", "Fast activation"],
       de: ["Pro-Design", "Vorlagen", "Arbeit & Studium", "Schnelle Aktivierung"],
     },
-    heroImage: "/products/creative-1.svg",
-    gallery: ["/products/creative-1.svg", "/products/creative-2.svg"],
+    heroImage: creativityPic,
+    gallery: [creativityPic, "/products/creative-2.svg"],
     badge: null,
     featured: false,
     offer: null,
@@ -147,8 +155,8 @@ export const products: Product[] = [
       en: ["Low latency", "Controller support", "New titles", "Play on devices"],
       de: ["Niedrige Latenz", "Controller-Support", "Neue Titel", "Auf Geräten spielen"],
     },
-    heroImage: "/products/games-1.svg",
-    gallery: ["/products/games-1.svg", "/products/games-2.svg"],
+    heroImage: gamingPic,
+    gallery: [gamingPic, "/products/games-2.svg"],
     badge: null,
     featured: false,
     offer: {

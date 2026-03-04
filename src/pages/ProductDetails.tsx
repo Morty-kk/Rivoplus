@@ -204,11 +204,11 @@ export default function ProductDetails() {
                 aspectRatio: "1 / 1",
               }}
             >
-              <div className="w-full h-full flex items-center justify-center p-4 md:p-8">
+              <div className="w-full h-full flex items-center justify-center">
                 <img
                   src={product.heroImage}
                   alt={product.title[language]}
-                  className="max-w-full max-h-full w-auto h-auto object-contain"
+                  className="w-full h-full object-contain"
                   style={{
                     objectFit: "contain",
                     objectPosition: "center",
