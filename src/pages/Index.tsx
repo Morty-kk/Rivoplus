@@ -141,8 +141,11 @@ const Index = () => {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex flex-wrap items-center gap-4 text-base font-medium text-muted-foreground">
-            <a href="#products" className="nav-link-fx px-1 py-1 text-muted-foreground">
+            <Link to="/products" className="nav-link-fx px-1 py-1 text-muted-foreground">
               {t.nav?.products ?? "Products"}
+            </Link>
+            <a href="#products" className="nav-link-fx px-1 py-1 text-muted-foreground">
+              {t.nav?.categories ?? "Categories"}
             </a>
             <a href="#faq" className="nav-link-fx px-1 py-1 text-muted-foreground">
               {t.nav?.faq ?? "FAQ"}
@@ -255,12 +258,19 @@ const Index = () => {
           <div className="mb-4 h-px bg-border/70" />
 
           <div className="space-y-1">
+            <Link
+              to="/products"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              {t.nav?.products ?? "Products"}
+            </Link>
             <a
               href="#products"
               onClick={() => setMobileMenuOpen(false)}
               className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
             >
-              {t.nav?.products ?? "Products"}
+              {t.nav?.categories ?? "Categories"}
             </a>
             <a
               href="#faq"

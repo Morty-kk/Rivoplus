@@ -3,10 +3,18 @@ import { Gamepad2, Music, Sparkles, Tv } from "lucide-react";
 // image assets imported from src so we can keep the files where you added them
 import IPTVLogo from "../assets/IPTV_Logo.jpg";
 import musicPic from "../assets/music_pic.png";
+import musicPicAr from "../assets/music_pic_ar.png";
 import gamingPic from "../assets/gaming_pic.png";
 import creativityPic from "../assets/creativity_pic.png";
 import tvPic from "../assets/tv_pic.png";
+import tvPicAr from "../assets/tv_pic_ar.png";
 import tfs from "../assets/247_pic.png";
+import adobePic from "../assets/adobe_pic.png";
+import adobePicAr from "../assets/adobe_pic_ar.png";
+import canvaPic from "../assets/canva_pic.png";
+import canvaPicAr from "../assets/canva_pic_ar.png";
+import ytPic from "../assets/yt_pic.png";
+import ytPicAr from "../assets/yt_pic_ar.png";
 
 export type Language = "ar" | "en" | "de";
 
@@ -23,8 +31,14 @@ export type Product = {
   description: Record<Language, string>;
   longDescription: Record<Language, string>;
   highlights: Record<Language, string[]>;
-  /** Place image files in /public/products and reference them like /products/your-image.webp */
+  /** Primary/default image used for all languages except Arabic (when arabicImage exists) */
   heroImage: string;
+  /** Optional Arabic-specific image variant. Falls back to heroImage if not provided. */
+  heroImageAr?: string;
+  /** Optional showcase grid image. Falls back to heroImage if not provided. */
+  showcaseImage?: string;
+  /** Optional Arabic-specific showcase image. Falls back to showcaseImage or heroImage. */
+  showcaseImageAr?: string;
   /**
    * Tune hero image sizing on the product details page.
    * - mobileHeightPx is prioritized for phones.
@@ -68,6 +82,9 @@ export const products: Product[] = [
     },
     // use the imported tvPic instead of the old logo file
     heroImage: tvPic,
+    heroImageAr: tvPicAr,
+    showcaseImage: tvPic,
+    showcaseImageAr: tvPicAr,
     heroImageLayout: {
       mobileHeightPx: 340,
       desktopHeightPx: 500,
@@ -103,6 +120,9 @@ export const products: Product[] = [
       de: ["Ohne Werbung", "Offline-Downloads", "Playlists", "Hohe Qualität"],
     },
     heroImage: musicPic,
+    heroImageAr: musicPicAr,
+    showcaseImage: musicPic,
+    showcaseImageAr: musicPicAr,
     gallery: [musicPic, tfs],
     badge: null,
     featured: false,
@@ -132,6 +152,7 @@ export const products: Product[] = [
       de: ["Pro-Design", "Vorlagen", "Arbeit & Studium", "Schnelle Aktivierung"],
     },
     heroImage: creativityPic,
+    showcaseImage: creativityPic,
     gallery: [creativityPic, tfs],
     badge: null,
     featured: false,
@@ -157,6 +178,7 @@ export const products: Product[] = [
       de: ["Niedrige Latenz", "Controller-Support", "Neue Titel", "Auf Geräten spielen"],
     },
     heroImage: gamingPic,
+    showcaseImage: gamingPic,
     gallery: [gamingPic, tfs],
     badge: null,
     featured: false,
@@ -173,6 +195,7 @@ export const copy = {
     dir: "rtl" as const,
     nav: {
       products: "المنتجات",
+      categories: "الفئات",
       faq: "الأسئلة الشائعة",
       contact: "تواصل معنا",
     },
@@ -229,6 +252,7 @@ export const copy = {
     dir: "ltr" as const,
     nav: {
       products: "Products",
+      categories: "Categories",
       faq: "FAQ",
       contact: "Contact",
     },
@@ -285,6 +309,7 @@ export const copy = {
     dir: "ltr" as const,
     nav: {
       products: "Produkte",
+      categories: "Kategorien",
       faq: "FAQ",
       contact: "Kontakt",
     },

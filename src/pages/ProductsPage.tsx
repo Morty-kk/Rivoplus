@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ExternalLink, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import RivoLogo from "@/components/RivoLogo";
+import { ProductShowcase } from "@/components/ProductShowcase";
 import PaymentMethods from "@/components/PaymentMethods";
 import TvPlanSelector, { type TvPlanSelectorValue, type TvPriceTable } from "@/components/TvPlanSelector";
 import MusicPlanSelector, { type MusicSelectorValue, type MusicPrices } from "@/components/MusicPlanSelector";
@@ -160,68 +161,97 @@ export default function ProductsPage() {
           </div>
         </motion.div>
 
-        <p className="mb-8 text-muted-foreground">{t.products.subtitle}</p>
+        <p className="mb-12 text-muted-foreground">{t.products.subtitle}</p>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <article
-              key={product.slug}
-              className="group overflow-hidden rounded-2xl border border-border bg-card/60 shadow-sm backdrop-blur-md transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <button
-                type="button"
-                onClick={() => openQuickView(product.slug)}
-                className="relative block w-full text-left touch-manipulation"
-                aria-label={t.products.quickView}
+        {/* Premium Product Showcase Grid */}
+        <ProductShowcase
+          products={products}
+          language={language}
+          exploreLabel={language === "ar" ? "استكشف" : language === "de" ? "Entdecken" : "Explore"}
+          productDetailsLabel={t.products.openDetails}
+          ctaLabel={t.products.viewDetails}
+        />
+
+        {/* Section Divider */}
+        <div className="my-16 border-t border-border/50" />
+
+        {/* Alternative Detailed Selection View */}
+        <div>
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-black text-foreground">
+              {language === "ar" ? "تخصيص طلبك" : language === "de" ? "Passen Sie Ihre Bestellung an" : "Customize your order"}
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              {language === "ar"
+                ? "اختر من خياراتنا المتنوعة"
+                : language === "de"
+                ? "Wählen Sie aus unseren Optionen"
+                : "Pick your preferred options"}
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {products.map((product) => (
+              <article
+                key={product.slug}
+                className="group overflow-hidden rounded-2xl border border-border bg-card/60 shadow-sm backdrop-blur-md transition hover:-translate-y-0.5 hover:shadow-md"
               >
-                <img
-                  src={product.heroImage}
-                  alt={product.title[language]}
-                  className="h-56 w-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute left-4 top-4 flex items-center gap-2">
-                  {product.badge ? <Badge variant="secondary">{product.badge[language]}</Badge> : null}
-                  {product.offer ? (
-                    <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
-                      {product.offer.label[language]} • -{product.offer.discountPercent}%
-                    </Badge>
-                  ) : null}
-                </div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => openQuickView(product.slug)}
+                  className="relative block w-full text-left touch-manipulation"
+                  aria-label={t.products.quickView}
+                >
+                  <img
+                    src={product.heroImage}
+                    alt={product.title[language]}
+                    className="h-56 w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute left-4 top-4 flex items-center gap-2">
+                    {product.badge ? <Badge variant="secondary">{product.badge[language]}</Badge> : null}
+                    {product.offer ? (
+                      <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        {product.offer.label[language]} • -{product.offer.discountPercent}%
+                      </Badge>
+                    ) : null}
+                  </div>
+                </button>
 
-              <div className="p-7">
-                <div className="mb-3 flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="product-card-icon-wrap">
-                      <product.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-extrabold text-foreground">{product.title[language]}</h2>
-                      <p className="mt-1 text-sm text-muted-foreground">{product.description[language]}</p>
+                <div className="p-7">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="product-card-icon-wrap">
+                        <product.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-extrabold text-foreground">{product.title[language]}</h2>
+                        <p className="mt-1 text-sm text-muted-foreground">{product.description[language]}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <Button onClick={() => openQuickView(product.slug)} className="gap-2 rounded-2xl px-5 py-6 text-base">
-                    <Eye className="h-5 w-5" />
-                    {t.products.quickView}
-                  </Button>
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <Button onClick={() => openQuickView(product.slug)} className="gap-2 rounded-2xl px-5 py-6 text-base">
+                      <Eye className="h-5 w-5" />
+                      {t.products.quickView}
+                    </Button>
 
-                  <Button asChild variant="secondary" className="gap-2 rounded-2xl px-5 py-6 text-base">
-                    <Link to={`/product/${product.slug}`}>
-                      <ExternalLink className="h-5 w-5" />
-                      {t.products.openDetails}
-                    </Link>
-                  </Button>
+                    <Button asChild variant="secondary" className="gap-2 rounded-2xl px-5 py-6 text-base">
+                      <Link to={`/product/${product.slug}`}>
+                        <ExternalLink className="h-5 w-5" />
+                        {t.products.openDetails}
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-10 rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-md">
+        {/* Payment Methods */}
+        <div className="mt-16 rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-md">
           <h2 className="text-base font-extrabold">{t.products.paymentTitle}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{t.products.paymentSubtitle}</p>
           <div className="mt-4">
@@ -229,6 +259,7 @@ export default function ProductsPage() {
           </div>
         </div>
 
+        {/* Footer */}
         <div className="mt-10 text-center text-sm text-muted-foreground">{t.footer}</div>
       </div>
 
