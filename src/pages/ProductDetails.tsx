@@ -199,7 +199,7 @@ export default function ProductDetails() {
           <div className="grid gap-0 grid-cols-1 lg:grid-cols-2">
             {/* IMAGE SECTION */}
             <div
-              className="relative overflow-hidden border-b border-border lg:border-b-0 lg:border-r flex items-center justify-center bg-gradient-to-br from-background to-background/80"
+              className="relative overflow-hidden border-b border-border lg:border-b-0 flex items-center justify-center bg-gradient-to-br from-background to-background/80 rounded-b-2xl lg:rounded-b-none"
               style={{
                 aspectRatio: "1 / 1",
               }}

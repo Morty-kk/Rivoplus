@@ -28,7 +28,7 @@ function LogoWrap({
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-xl border border-border bg-background/70 px-2 py-1 shadow-sm",
+        "flex items-center justify-center rounded-xl border border-border bg-background/70 shadow-sm overflow-hidden",
         className,
       )}
       aria-label={title}
@@ -48,7 +48,7 @@ export default function PaymentMethods({ className, size = "md" }: PaymentMethod
         <img
           src={paypalImg}
           alt="PayPal"
-          className={cn("object-contain max-w-full max-h-full", size === "sm" ? "h-8" : "h-9")}
+          className="object-cover h-full w-full rounded-lg"
         />
       </LogoWrap>
 
@@ -56,7 +56,7 @@ export default function PaymentMethods({ className, size = "md" }: PaymentMethod
         <img
           src={visaImg}
           alt="VISA"
-          className={cn("object-contain max-w-full max-h-full", size === "sm" ? "h-8" : "h-9")}
+          className="object-cover h-full w-full rounded-lg"
         />
       </LogoWrap>
 
@@ -64,7 +64,7 @@ export default function PaymentMethods({ className, size = "md" }: PaymentMethod
         <img
           src={mastercardImg}
           alt="Mastercard"
-          className={cn("object-contain max-w-full max-h-full", size === "sm" ? "h-8" : "h-9")}
+          className="object-cover h-full w-full rounded-lg"
         />
       </LogoWrap>
     </div>
