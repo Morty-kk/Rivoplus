@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import RivoLogo from "@/components/RivoLogo";
 import PaymentMethods from "@/components/PaymentMethods";
 import TvPlanSelector, { type TvPlanSelectorValue, type TvPriceTable } from "@/components/TvPlanSelector";
@@ -11,8 +11,13 @@ import CreativityPlanSelector, {
 } from "@/components/CreativityPlanSelector";
 import OrderLinks from "@/components/OrderLinks";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { buildOrderMessage } from "@/lib/orderMessage";
 import { copy, products, type Language } from "./index-content";
+import adobePic from "../assets/adobe_pic.png";
+import adobePicAr from "../assets/adobe_pic_ar.png";
+import canvaPic from "../assets/canva_pic.png";
+import canvaPicAr from "../assets/canva_pic_ar.png";
 
 const getSavedLanguage = (): Language => {
   if (typeof window === "undefined") return "ar";
@@ -41,31 +46,101 @@ export default function ProductDetails() {
   const product = products.find((p) => p.slug === slug);
 
   // when the games product is selected we don’t show the normal detail page;
-  // instead render a simple “coming soon” screen in the site’s theme.
+  // instead render a more polished “coming soon” screen with product branding.
   if (slug === "games") {
     const msg =
       language === "ar"
-        ? "هذا القسم سيأتي قريباً"
+        ? "الألعاب السحابية ستصل قريباً مع تجربة لعب فورية على جميع الأجهزة. تابعنا الآن للحصول على التحديثات."
         : language === "de"
-        ? "Dieser Bereich kommt bald"
-        : "This section is coming soon";
+        ? "Cloud-Gaming kommt bald — spiele sofort auf jedem Gerät. Folge uns für Updates."
+        : "Cloud gaming is coming soon — play instantly on every device. Follow us for updates.";
 
     return (
       <div
         dir={t.dir}
-        className="min-h-screen flex flex-col items-center justify-center bg-blue-900 text-white"
+        className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_25%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.16),_transparent_20%),bg-slate-950] text-white"
       >
-        <RivoLogo className="mb-8 text-5xl" />
-        <h1 className="text-4xl font-bold">
-          {language === "ar" ? "قريباً" : language === "de" ? "Kommt bald" : "Coming soon"}
-        </h1>
-        <p className="mt-4 text-lg text-center max-w-md">{msg}</p>
-        <Link
-          to="/"
-          className="mt-6 inline-block rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-        >
-          {i18n.backToHome[language]}
-        </Link>
+        <div className="container mx-auto px-4 py-10 lg:py-16">
+          <div className="mb-8 flex items-center justify-between gap-4 rounded-3xl border border-white/10 bg-slate-900/70 px-5 py-4 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <RivoLogo className="h-11 w-[110px]" />
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/90">{product?.title[language]}</p>
+                <p className="mt-1 text-sm text-slate-300">{t.products.subtitle}</p>
+              </div>
+            </div>
+            <Link
+              to="/products"
+              className="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-cyan-500/10 transition hover:bg-white/20"
+            >
+              {language === "ar" ? "عد إلى المنتجات" : language === "de" ? "Zurück zu Produkten" : "Back to products"}
+            </Link>
+          </div>
+
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.9fr] items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full bg-cyan-500/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200">
+                {language === "ar" ? "قريباً" : language === "de" ? "Bald verfügbar" : "Coming soon"}
+              </div>
+              <h1 className="text-4xl font-black leading-tight text-white md:text-5xl lg:text-6xl">
+                {language === "ar"
+                  ? "تجربة ألعاب سحابية جديدة"
+                  : language === "de"
+                  ? "Dein neues Cloud-Gaming-Erlebnis"
+                  : "Your next cloud gaming experience"}
+              </h1>
+              <p className="max-w-xl text-base leading-8 text-slate-300 md:text-lg">
+                {msg}
+              </p>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {product?.highlights[language].map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-slate-100 shadow-sm shadow-slate-950/10"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to="/products"
+                  className="inline-flex items-center justify-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+                >
+                  {language === "ar" ? "اكتشف باقي المنتجات" : language === "de" ? "Weitere Produkte ansehen" : "Explore other products"}
+                </Link>
+                <a
+                  href="https://t.me/rivoplus"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                >
+                  {language === "ar" ? "احصل على إشعار" : language === "de" ? "Benachrichtigt werden" : "Get notified"}
+                </a>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/90 shadow-2xl shadow-slate-950/40">
+              <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cyan-400/10 to-transparent" />
+              <img
+                src={product?.heroImage}
+                alt={product?.title[language] ?? "Games"}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent px-6 py-5 text-slate-100">
+                <p className="text-sm uppercase tracking-[0.4em] text-cyan-200/90">
+                  {language === "ar" ? "قريباً" : language === "de" ? "Bald" : "Soon"}
+                </p>
+                <p className="mt-2 text-lg font-semibold">
+                  {language === "ar" ? "لعبة بدون تأخير" : language === "de" ? "Lag-free Gaming" : "Lag-free gaming"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -77,7 +152,7 @@ export default function ProductDetails() {
   });
 
   const [musicValue, setMusicValue] = React.useState<MusicSelectorValue>({
-    service: "spotify",
+    service: "youtube",
     tier: "premium",
     durationMonths: 12,
   });
@@ -87,6 +162,14 @@ export default function ProductDetails() {
     tier: "pro",
     durationMonths: 12,
   });
+
+  const [imageModalOpen, setImageModalOpen] = React.useState(false);
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
+
+  const openImageModal = (imageSrc: string) => {
+    setSelectedImage(imageSrc);
+    setImageModalOpen(true);
+  };
 
   const tvPrices: TvPriceTable = React.useMemo(
     () => ({
@@ -123,10 +206,6 @@ export default function ProductDetails() {
 
   const musicPrices: MusicPrices = React.useMemo(
     () => ({
-      spotify: {
-        premium: { 1: 6, 3: 15, 6: 25, 12: 35 },
-        duo: { 1: 10, 3: 25, 6: 40, 12: 55 },
-      },
       youtube: {
         premium: { 1: 7, 3: 18, 6: 28, 12: 40 },
       },
@@ -154,11 +233,16 @@ export default function ProductDetails() {
           </Link>
           <div className="mt-10 glass rounded-2xl p-6">
             <p className="mb-4 text-lg font-bold">{i18n.notFound[language]}</p>
-            <Link to="/" className="btn-primary">
+            <Link to="/products" className="btn-primary">
               {i18n.backToHome[language]}
             </Link>
           </div>
         </div>
+
+        {/* Image Modal - not used on not found page */}
+        <Dialog open={false} onOpenChange={() => {}}>
+          <DialogContent></DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -181,13 +265,35 @@ export default function ProductDetails() {
     position: "center",
   };
 
+  const creativityImage =
+    product.slug === "creativity"
+      ? creativityValue.service === "canva"
+        ? canvaPic
+        : adobePic
+      : product.heroImage;
+
+  const creativityImageAr =
+    product.slug === "creativity"
+      ? creativityValue.service === "canva"
+        ? canvaPicAr
+        : adobePicAr
+      : product.heroImageAr ?? product.heroImage;
+
+  const displayHeroImage = product.slug === "creativity" ? creativityImage : product.heroImage;
+  const displayHeroImageAr = product.slug === "creativity" ? creativityImageAr : product.heroImageAr ?? product.heroImage;
+
+  const displayGallery =
+    product.slug === "creativity"
+      ? [displayHeroImage, ...(product.gallery.slice(1) || [])]
+      : product.gallery;
+
   return (
     <div dir={t.dir} className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
         <div className="mb-4 md:mb-6 flex items-center justify-between gap-3">
           <RivoLogo className="h-8 md:h-10 w-[100px] md:w-[130px] lg:h-14 lg:w-[180px]" />
           <Link
-            to="/#products"
+            to="/products"
             className="inline-flex items-center gap-2 rounded-lg md:rounded-xl border border-border bg-background/40 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold backdrop-blur-md hover:bg-muted/40 flex-shrink-0"
           >
             <ArrowIcon className="h-3 w-3 md:h-4 md:w-4" />
@@ -199,16 +305,17 @@ export default function ProductDetails() {
           <div className="grid gap-0 grid-cols-1 lg:grid-cols-2">
             {/* IMAGE SECTION */}
             <div
-              className="relative overflow-hidden border-b border-border lg:border-b-0 flex items-center justify-center bg-gradient-to-br from-background to-background/80 rounded-b-2xl lg:rounded-b-none"
+              className="relative overflow-hidden border-b border-border lg:border-b-0 flex items-center justify-center bg-gradient-to-br from-background to-background/80 rounded-b-2xl lg:rounded-b-none cursor-pointer"
               style={{
                 aspectRatio: "1 / 1",
               }}
+              onClick={() => openImageModal(product.heroImage)}
             >
               <div className="w-full h-full flex items-center justify-center">
                 <img
-                  src={product.heroImage}
+                  src={t.dir === "rtl" ? displayHeroImageAr : displayHeroImage}
                   alt={product.title[language]}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-200"
                   style={{
                     objectFit: "contain",
                     objectPosition: "center",
@@ -306,13 +413,14 @@ export default function ProductDetails() {
                 <section>
                   <h2 className="text-sm md:text-base font-bold text-foreground mb-3">{i18n.gallery[language]}</h2>
                   <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 -mx-5 md:-mx-6 lg:-mx-8 px-5 md:px-6 lg:px-8">
-                    {product.gallery.map((srcImg) => (
+                    {displayGallery.map((srcImg) => (
                       <img
                         key={srcImg}
                         src={srcImg}
                         alt={product.title[language]}
-                        className="h-24 w-32 md:h-28 md:w-44 shrink-0 rounded-lg border border-border object-cover"
+                        className="h-24 w-32 md:h-28 md:w-44 shrink-0 rounded-lg border border-border object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
                         loading="lazy"
+                        onClick={() => openImageModal(srcImg)}
                       />
                     ))}
                   </div>
@@ -323,6 +431,30 @@ export default function ProductDetails() {
         </div>
 
         <div className="mt-6 md:mt-10 text-center text-xs md:text-sm text-muted-foreground py-6">{t.footer}</div>
+
+        {/* Image Modal */}
+        <Dialog open={imageModalOpen} onOpenChange={setImageModalOpen}>
+          <DialogContent className="max-w-4xl w-full h-full max-h-[90vh] p-0 bg-transparent border-none shadow-none">
+            <div className="relative w-full h-full flex items-center justify-center">
+              <button
+                onClick={() => setImageModalOpen(false)}
+                className="absolute top-4 right-4 z-10 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+                aria-label="Close image"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              {selectedImage && (
+                <img
+                  src={selectedImage}
+                  alt={product?.title[language] || "Product image"}
+                  className="max-w-full max-h-full object-contain rounded-lg"
+                  onClick={() => setImageModalOpen(false)}
+                  style={{ cursor: 'zoom-out' }}
+                />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, Eye } from "lucide-react";
+import { ExternalLink, Eye, MessageCircle, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import RivoLogo from "@/components/RivoLogo";
+import Navigation from "@/components/Navigation";
 import { ProductShowcase } from "@/components/ProductShowcase";
 import PaymentMethods from "@/components/PaymentMethods";
 import TvPlanSelector, { type TvPlanSelectorValue, type TvPriceTable } from "@/components/TvPlanSelector";
@@ -24,6 +25,39 @@ const getLanguage = (): Language => {
   return savedLanguage === "ar" || savedLanguage === "en" || savedLanguage === "de" ? savedLanguage : "ar";
 };
 
+const FAQSection = ({ language }: { language: Language }) => {
+  const t = copy[language] ?? copy.ar;
+  const faqItems = t.faq?.items ?? [];
+
+  return (
+    <section id="faq" className="pb-24">
+      <div className="container mx-auto px-6">
+        <div className="mb-10 text-center">
+          <h2 className="mb-3 text-3xl font-black text-foreground md:text-4xl">
+            {t.faq?.title ?? "FAQ"}
+          </h2>
+          <p className="text-muted-foreground">{t.faq?.subtitle ?? ""}</p>
+        </div>
+
+        <div className="mx-auto grid max-w-4xl gap-3">
+          {faqItems.map((item, idx) => (
+            <details
+              key={idx}
+              className="group rounded-xl border border-border bg-background/70 p-4 open:border-primary/30"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-foreground">
+                <span>{item.q}</span>
+                <span className="text-primary transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 export default function ProductsPage() {
   const language = getLanguage();
   const t = copy[language];
@@ -43,7 +77,7 @@ export default function ProductsPage() {
   });
 
   const [musicValue, setMusicValue] = React.useState<MusicSelectorValue>({
-    service: "spotify",
+    service: "youtube",
     tier: "premium",
     durationMonths: 12,
   });
@@ -89,11 +123,6 @@ export default function ProductsPage() {
 
   const musicPrices: MusicPrices = React.useMemo(
     () => ({
-      trial24h: 0,
-      spotify: {
-        premium: { 1: 6, 3: 15, 6: 25, 12: 35 },
-        duo: { 1: 10, 3: 25, 6: 40, 12: 55 },
-      },
       youtube: {
         premium: { 1: 7, 3: 18, 6: 28, 12: 40 },
       },
@@ -130,7 +159,9 @@ export default function ProductsPage() {
   }, [selected, language, tvValue, tvPrices, musicValue, musicPrices, creativityValue, creativityPrices]);
 
   return (
-    <main className="min-h-screen bg-background px-6 py-16 font-cairo" dir={t.dir}>
+    <>
+      <Navigation />
+      <main className="min-h-screen bg-background px-6 py-16 font-cairo" dir={t.dir}>
       <div className="container mx-auto max-w-5xl">
         <div className="mb-10 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -144,33 +175,18 @@ export default function ProductsPage() {
           </Link>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-8 rounded-2xl border border-border bg-card/60 p-5 backdrop-blur-md"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div className="text-sm font-extrabold text-primary">{t.products.ramadanTitle}</div>
-              <div className="text-base font-semibold text-foreground">{t.products.ramadanSubtitle}</div>
-            </div>
-            <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
-              {language === "ar" ? "خصم محدود" : language === "de" ? "Zeitlich begrenzt" : "Limited time"}
-            </Badge>
-          </div>
-        </motion.div>
-
         <p className="mb-12 text-muted-foreground">{t.products.subtitle}</p>
 
         {/* Premium Product Showcase Grid */}
-        <ProductShowcase
-          products={products}
-          language={language}
-          exploreLabel={language === "ar" ? "استكشف" : language === "de" ? "Entdecken" : "Explore"}
-          productDetailsLabel={t.products.openDetails}
-          ctaLabel={t.products.viewDetails}
-        />
+        <div id="products">
+          <ProductShowcase
+            products={products}
+            language={language}
+            exploreLabel={language === "ar" ? "استكشف" : language === "de" ? "Entdecken" : "Explore"}
+            productDetailsLabel={t.products.openDetails}
+            ctaLabel={t.products.viewDetails}
+          />
+        </div>
 
         {/* Section Divider */}
         <div className="my-16 border-t border-border/50" />
@@ -190,64 +206,7 @@ export default function ProductsPage() {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {products.map((product) => (
-              <article
-                key={product.slug}
-                className="group overflow-hidden rounded-2xl border border-border bg-card/60 shadow-sm backdrop-blur-md transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <button
-                  type="button"
-                  onClick={() => openQuickView(product.slug)}
-                  className="relative block w-full text-left touch-manipulation"
-                  aria-label={t.products.quickView}
-                >
-                  <img
-                    src={product.heroImage}
-                    alt={product.title[language]}
-                    className="h-56 w-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="absolute left-4 top-4 flex items-center gap-2">
-                    {product.badge ? <Badge variant="secondary">{product.badge[language]}</Badge> : null}
-                    {product.offer ? (
-                      <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
-                        {product.offer.label[language]} • -{product.offer.discountPercent}%
-                      </Badge>
-                    ) : null}
-                  </div>
-                </button>
-
-                <div className="p-7">
-                  <div className="mb-3 flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="product-card-icon-wrap">
-                        <product.icon className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h2 className="text-lg font-extrabold text-foreground">{product.title[language]}</h2>
-                        <p className="mt-1 text-sm text-muted-foreground">{product.description[language]}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-3">
-                    <Button onClick={() => openQuickView(product.slug)} className="gap-2 rounded-2xl px-5 py-6 text-base">
-                      <Eye className="h-5 w-5" />
-                      {t.products.quickView}
-                    </Button>
-
-                    <Button asChild variant="secondary" className="gap-2 rounded-2xl px-5 py-6 text-base">
-                      <Link to={`/product/${product.slug}`}>
-                        <ExternalLink className="h-5 w-5" />
-                        {t.products.openDetails}
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          {/* Product cards hidden while customization content is being refined. */}
         </div>
 
         {/* Payment Methods */}
@@ -262,6 +221,54 @@ export default function ProductsPage() {
         {/* Footer */}
         <div className="mt-10 text-center text-sm text-muted-foreground">{t.footer}</div>
       </div>
+
+      {/* FAQ */}
+      <FAQSection language={language} />
+
+      {/* CONTACT */}
+      <section id="contact" className="pb-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mx-auto max-w-4xl glass p-8 text-center"
+          >
+            <h2 className="mb-3 text-2xl font-black text-foreground md:text-3xl">
+              {t.contact?.title ?? "Contact"}
+            </h2>
+            <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">
+              {t.contact?.subtitle ?? ""}
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              <a
+                href="https://wa.me/963980582206"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary interactive-surface inline-flex items-center gap-2"
+              >
+                <MessageCircle className="h-4 w-4" />
+                {t.contact?.whatsapp ?? "WhatsApp"}
+              </a>
+
+              <a
+                href="https://t.me/rivoplus"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="interactive-surface inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 font-bold text-foreground hover:bg-muted"
+              >
+                <Send className="h-4 w-4" />
+                {t.contact?.telegram ?? "Telegram"}
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <footer className="border-t border-border/70 py-6 text-center text-sm text-muted-foreground">
+        <div className="container mx-auto px-6">{t.footer ?? "© 2026 Rivo Plus"}</div>
+      </footer>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-3xl">
@@ -382,5 +389,6 @@ export default function ProductsPage() {
         </DialogContent>
       </Dialog>
     </main>
+    </>
   );
 }
