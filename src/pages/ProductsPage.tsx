@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, Eye, MessageCircle, Send } from "lucide-react";
+import { ExternalLink, MessageCircle, Send, ShoppingCart } from "lucide-react";
 import { motion } from "framer-motion";
 import RivoLogo from "@/components/RivoLogo";
 import Navigation from "@/components/Navigation";
@@ -17,6 +17,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { buildOrderMessage } from "@/lib/orderMessage";
+import { useCart } from "@/lib/cart";
+import { buildCartItem } from "@/lib/productSelection";
+import { useToast } from "@/hooks/use-toast";
 import { copy, products, type Language, type Product } from "./index-content";
 
 const getLanguage = (): Language => {
@@ -59,11 +62,25 @@ const FAQSection = ({ language }: { language: Language }) => {
 };
 
 export default function ProductsPage() {
-  const language = getLanguage();
+  const [language, setLanguage] = React.useState<Language>(getLanguage);
   const t = copy[language];
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
   const [open, setOpen] = React.useState(false);
   const [selectedSlug, setSelectedSlug] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleLanguageChange = (event: Event) => {
+      const nextLanguage = (event as CustomEvent<Language>).detail;
+      if (nextLanguage === "ar" || nextLanguage === "en" || nextLanguage === "de") {
+        setLanguage(nextLanguage);
+      }
+    };
+
+    window.addEventListener("rivo-language-change", handleLanguageChange);
+    return () => window.removeEventListener("rivo-language-change", handleLanguageChange);
+  }, []);
 
   const selected: Product | null = React.useMemo(
     () => products.find((p) => p.slug === selectedSlug) ?? null,
@@ -124,7 +141,7 @@ export default function ProductsPage() {
   const musicPrices: MusicPrices = React.useMemo(
     () => ({
       youtube: {
-        premium: { 1: 7, 3: 18, 6: 28, 12: 40 },
+        premium: 40,
       },
     }),
     [],
@@ -132,16 +149,11 @@ export default function ProductsPage() {
 
   const creativityPrices: CreativityPrices = React.useMemo(
     () => ({
-      adobe: { 1: 18, 3: 45, 6: 80, 12: 140 },
-      canva: { 1: 10, 3: 25, 6: 45, 12: 80 },
+      adobe: { 12: 50 },
+      canva: { 12: 5 },
     }),
     [],
   );
-
-  const openQuickView = (slug: string) => {
-    setSelectedSlug(slug);
-    setOpen(true);
-  };
 
   const WHATSAPP_PHONE = "963980582206";
   const TELEGRAM_USERNAME = "rivoplus";
@@ -157,6 +169,31 @@ export default function ProductsPage() {
       creativity: { value: creativityValue, prices: creativityPrices },
     });
   }, [selected, language, tvValue, tvPrices, musicValue, musicPrices, creativityValue, creativityPrices]);
+
+  const addSelectedToCart = () => {
+    if (!selected) return;
+    addProductToCart(selected);
+  };
+
+  const addProductToCart = (product: Product) => {
+    addItem(
+      buildCartItem({
+        product,
+        language,
+        tv: { value: tvValue, prices: tvPrices },
+        music: { value: musicValue, prices: musicPrices },
+        creativity: { value: creativityValue, prices: creativityPrices },
+      }),
+    );
+    toast({
+      title:
+        language === "ar"
+          ? "تمت الإضافة إلى السلة"
+          : language === "de"
+        ? "Zum Warenkorb hinzugefügt"
+        : "Added to cart",
+    });
+  };
 
   return (
     <>
@@ -185,28 +222,9 @@ export default function ProductsPage() {
             exploreLabel={language === "ar" ? "استكشف" : language === "de" ? "Entdecken" : "Explore"}
             productDetailsLabel={t.products.openDetails}
             ctaLabel={t.products.viewDetails}
+            addToCartLabel={language === "ar" ? "أضف للسلة" : language === "de" ? "In den Warenkorb" : "Add to cart"}
+            onAddToCart={addProductToCart}
           />
-        </div>
-
-        {/* Section Divider */}
-        <div className="my-16 border-t border-border/50" />
-
-        {/* Alternative Detailed Selection View */}
-        <div>
-          <div className="mb-8 text-center">
-            <h2 className="text-2xl font-black text-foreground">
-              {language === "ar" ? "تخصيص طلبك" : language === "de" ? "Passen Sie Ihre Bestellung an" : "Customize your order"}
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              {language === "ar"
-                ? "اختر من خياراتنا المتنوعة"
-                : language === "de"
-                ? "Wählen Sie aus unseren Optionen"
-                : "Pick your preferred options"}
-            </p>
-          </div>
-
-          {/* Product cards hidden while customization content is being refined. */}
         </div>
 
         {/* Payment Methods */}
@@ -271,29 +289,34 @@ export default function ProductsPage() {
       </footer>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl p-0 sm:p-6">
           {selected ? (
-            <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-3">
-                  <div className="product-card-icon-wrap">
+            <div className="max-h-[calc(100dvh-1.5rem)] overflow-y-auto overscroll-contain sm:max-h-[84vh]">
+              <DialogHeader className="sticky top-0 z-20 border-b border-border/70 bg-background/95 px-4 pb-3 pt-4 text-start backdrop-blur-xl sm:static sm:border-0 sm:bg-transparent sm:p-0">
+                <DialogTitle className="flex items-center gap-3 pr-12 text-start text-base sm:text-lg">
+                  <div className="product-card-icon-wrap" style={{ marginBottom: 0 }}>
                     <selected.icon className="h-5 w-5 text-primary" />
                   </div>
-                  <span>{selected.title[language]}</span>
+                  <span className="min-w-0 flex-1 leading-tight">{selected.title[language]}</span>
                   {selected.offer ? (
-                    <Badge className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Badge className="ml-2 hidden bg-primary text-primary-foreground hover:bg-primary/90 sm:inline-flex">
                       {selected.offer.label[language]} • -{selected.offer.discountPercent}%
                     </Badge>
                   ) : null}
                 </DialogTitle>
+                {selected.offer ? (
+                  <Badge className="mt-3 w-fit bg-primary text-primary-foreground hover:bg-primary/90 sm:hidden">
+                    {selected.offer.label[language]} • -{selected.offer.discountPercent}%
+                  </Badge>
+                ) : null}
               </DialogHeader>
 
-              <div className="grid gap-6 lg:grid-cols-2">
+              <div className="grid gap-5 p-4 sm:gap-6 sm:p-0 lg:grid-cols-2">
                 <div className="space-y-3">
                   <img
                     src={selected.heroImage}
                     alt={selected.title[language]}
-                    className="h-56 w-full rounded-2xl border border-border object-cover"
+                    className="h-44 w-full rounded-2xl border border-border object-cover sm:h-56"
                     loading="lazy"
                   />
                   <div className="flex gap-3 overflow-x-auto pb-1">
@@ -302,7 +325,7 @@ export default function ProductsPage() {
                         key={srcImg}
                         src={srcImg}
                         alt={selected.title[language]}
-                        className="h-20 w-28 shrink-0 rounded-xl border border-border object-cover"
+                        className="h-16 w-24 shrink-0 rounded-xl border border-border object-cover sm:h-20 sm:w-28"
                         loading="lazy"
                       />
                     ))}
@@ -360,15 +383,20 @@ export default function ProductsPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Button asChild className="gap-2 rounded-2xl px-5 py-6 text-base">
+                  <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 border-t border-border/70 bg-background/95 px-4 py-3 backdrop-blur-xl sm:static sm:mx-0 sm:flex-row sm:flex-wrap sm:items-center sm:border-0 sm:bg-transparent sm:p-0">
+                    <Button type="button" onClick={addSelectedToCart} className="h-12 gap-2 rounded-2xl px-5 text-base sm:h-auto sm:py-6">
+                      <ShoppingCart className="h-5 w-5" />
+                      {language === "ar" ? "أضف إلى السلة" : language === "de" ? "In den Warenkorb" : "Add to cart"}
+                    </Button>
+
+                    <Button asChild className="h-12 gap-2 rounded-2xl px-5 text-base sm:h-auto sm:py-6">
                       <Link to={`/product/${selected.slug}`} onClick={() => setOpen(false)}>
                         <ExternalLink className="h-5 w-5" />
                         {t.products.openDetails}
                       </Link>
                     </Button>
 
-                    <Button variant="secondary" onClick={() => setOpen(false)} className="rounded-2xl px-5 py-6 text-base">
+                    <Button variant="secondary" onClick={() => setOpen(false)} className="h-12 rounded-2xl px-5 text-base sm:h-auto sm:py-6">
                       {language === "ar" ? "إغلاق" : language === "de" ? "Schließen" : "Close"}
                     </Button>
                   </div>
@@ -384,7 +412,7 @@ export default function ProductsPage() {
                   ) : null}
                 </div>
               </div>
-            </>
+            </div>
           ) : null}
         </DialogContent>
       </Dialog>

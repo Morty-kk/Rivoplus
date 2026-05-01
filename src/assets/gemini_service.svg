@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" fill="none">
+  <rect width="1200" height="1200" rx="64" fill="#0B1020"/>
+  <rect x="120" y="160" width="960" height="780" rx="56" fill="url(#bg)"/>
+  <path d="M600 250c34 148 118 232 266 266-148 34-232 118-266 266-34-148-118-232-266-266 148-34 232-118 266-266Z" fill="white"/>
+  <path d="M600 314c25 109 87 171 196 196-109 25-171 87-196 196-25-109-87-171-196-196 109-25 171-87 196-196Z" fill="#8AB4F8"/>
+  <circle cx="840" cy="300" r="44" fill="#C58AF9"/>
+  <circle cx="360" cy="780" r="34" fill="#7DD3FC"/>
+  <text x="600" y="1020" text-anchor="middle" fill="white" font-family="Inter, Arial, sans-serif" font-size="92" font-weight="800">Gemini</text>
+  <defs>
+    <linearGradient id="bg" x1="120" y1="160" x2="1080" y2="940" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E1B4B"/>
+      <stop offset=".5" stop-color="#312E81"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+</svg>

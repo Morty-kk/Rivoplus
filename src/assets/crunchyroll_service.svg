@@ -1,0 +1,20 @@
+<svg width="960" height="960" viewBox="0 0 960 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="960" rx="96" fill="#0B0D12"/>
+  <rect x="48" y="48" width="864" height="864" rx="72" fill="url(#bg)"/>
+  <path d="M62 658C184 613 310 596 448 609C591 623 723 599 898 527V884H62V658Z" fill="#F47521"/>
+  <path d="M62 709C188 667 319 655 458 670C599 686 733 657 898 586V884H62V709Z" fill="#FF9A3D"/>
+  <circle cx="480" cy="404" r="214" fill="#111827"/>
+  <path d="M481 184C602 184 700 282 700 403C700 525 602 622 481 622C359 622 262 525 262 403C262 282 359 184 481 184ZM481 245C393 245 323 316 323 403C323 491 393 561 481 561C568 561 639 491 639 403C639 316 568 245 481 245Z" fill="#F47521"/>
+  <path d="M551 342C597 342 634 379 634 425C634 471 597 508 551 508C505 508 468 471 468 425C468 379 505 342 551 342Z" fill="#F47521"/>
+  <path d="M396 498C351 453 349 381 391 333C432 286 503 279 553 314C464 318 392 391 396 498Z" fill="#FFB15C"/>
+  <rect x="168" y="704" width="624" height="104" rx="34" fill="#111827" fill-opacity="0.92"/>
+  <text x="480" y="770" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="800" fill="#FFFFFF">Crunchyroll</text>
+  <text x="480" y="834" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" fill="#331407">ANIME STREAMING</text>
+  <defs>
+    <linearGradient id="bg" x1="92" y1="88" x2="880" y2="906" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#141820"/>
+      <stop offset="0.52" stop-color="#0D1017"/>
+      <stop offset="1" stop-color="#211106"/>
+    </linearGradient>
+  </defs>
+</svg>

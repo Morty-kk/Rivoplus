@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Moon, Sun, Play, MessageCircle, Send, Menu, X } from "lucide-react";
+import { Play, MessageCircle, Send, Menu, X, ShoppingCart } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 import RivoLogo from "@/components/RivoLogo";
+import LanguageSelector from "@/components/LanguageSelector";
+import { ProductShowcase } from "@/components/ProductShowcase";
+import CartSection from "@/components/CartSection";
+import { CelestialShowcase } from "@/components/CelestialShowcase";
+import { TextParticles } from "@/components/TextParticles";
+import { useCart } from "@/lib/cart";
+import { buildCartItem } from "@/lib/productSelection";
+import { useToast } from "@/hooks/use-toast";
+import type { TvPriceTable } from "@/components/TvPlanSelector";
+import type { MusicPrices } from "@/components/MusicPlanSelector";
+import type { CreativityPrices } from "@/components/CreativityPlanSelector";
 import { copy, products, type Language, type Product } from "./index-content";
 
 const fadeInUp = {
@@ -11,43 +22,32 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
 };
 
+const chipContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.38 } },
+};
+const chipItem = {
+  hidden: { opacity: 0, y: 12, scale: 0.86 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.42, ease: "easeOut" } },
+};
 
-const ProductCard = ({
-  product,
-  index,
-  language,
-  viewDetailsLabel,
-}: {
-  product: Product;
-  index: number;
-  language: Language;
-  viewDetailsLabel: string;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 28 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay: index * 0.08, duration: 0.45 }}
-  >
-    <Link
-      to={`/product/${product.slug}`}
-      className={`product-card block p-6 ${product.featured ? "featured" : ""}`}
-    >
-      {product.badge && <span className="product-card-badge">{product.badge[language]}</span>}
+const metricContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.22 } },
+};
+const metricItem = {
+  hidden: { opacity: 0, y: 16, scale: 0.9 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.44, ease: "easeOut" } },
+};
 
-      <div className="product-card-icon-wrap">
-        <product.icon className="h-6 w-6 text-primary" />
-      </div>
-
-      <h3 className="product-card-title">{product.title[language]}</h3>
-      <p className="product-card-desc mb-4">{product.description[language]}</p>
-
-      <span className="inline-flex items-center text-sm font-bold text-primary">
-        {viewDetailsLabel}
-      </span>
-    </Link>
-  </motion.div>
-);
+const featureContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.11, delayChildren: 0.18 } },
+};
+const featureItem = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.38, ease: "easeOut" } },
+};
 
 const FAQSection = ({ language }: { language: Language }) => {
   const t = copy[language] ?? copy.ar;
@@ -82,13 +82,6 @@ const FAQSection = ({ language }: { language: Language }) => {
   );
 };
 
-const getInitialTheme = (): "light" | "dark" => {
-  if (typeof window === "undefined") return "light";
-  const savedTheme = window.localStorage.getItem("theme");
-  if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-};
-
 const getInitialLanguage = (): Language => {
   if (typeof window === "undefined") return "ar";
   const savedLanguage = window.localStorage.getItem("language");
@@ -100,52 +93,122 @@ const Index = () => {
   // configure this to the WhatsApp URL you want the trial button to open
   const WHATSAPP_TRIAL_LINK = "https://wa.me/963980582206?text=I%20want%20the%2024h%20trial";
 
-  const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { addItem, itemCount } = useCart();
+  const { toast } = useToast();
 
   const t = copy[language] ?? copy.ar;
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    window.localStorage.setItem("theme", theme);
-  }, [theme]);
+    document.documentElement.classList.add("dark");
+    window.localStorage.setItem("theme", "dark");
+  }, []);
 
   useEffect(() => {
     window.localStorage.setItem("language", language);
+    window.dispatchEvent(new CustomEvent("rivo-language-change", { detail: language }));
     setMobileMenuOpen(false);
   }, [language]);
+
+  const tvPrices: TvPriceTable = {
+    gold: {
+      1: { deutsch: 5, arabisch: 5 },
+      3: { deutsch: 10, arabisch: 10 },
+      6: { deutsch: 20, arabisch: 15 },
+      12: { deutsch: 30, arabisch: 25 },
+    },
+    diamond: {
+      1: { deutsch: 10, arabisch: 10 },
+      3: { deutsch: 20, arabisch: 15 },
+      6: { deutsch: 30, arabisch: 25 },
+      12: { deutsch: 40, arabisch: 35 },
+    },
+  };
+  const musicPrices: MusicPrices = { youtube: { premium: 40 } };
+  const creativityPrices: CreativityPrices = {
+    adobe: { 12: 50 },
+    canva: { 12: 5 },
+  };
+
+  const addProductToCart = (product: Product) => {
+    addItem(
+      buildCartItem({
+        product,
+        language,
+        tv: { value: { plan: "gold", duration: 12, audience: "arabisch" }, prices: tvPrices },
+        music: { value: { service: "youtube", tier: "premium", durationMonths: 12 }, prices: musicPrices },
+        creativity: { value: { service: "adobe", tier: "pro", durationMonths: 12 }, prices: creativityPrices },
+      }),
+    );
+    toast({
+      title:
+        language === "ar"
+          ? "تمت الإضافة إلى السلة"
+          : language === "de"
+          ? "Zum Warenkorb hinzugefügt"
+          : "Added to cart",
+    });
+  };
+
+  const productSections = [
+    {
+      key: "streaming" as const,
+      title: language === "ar" ? "TV و Streaming" : language === "de" ? "TV & Streaming" : "TV & Streaming",
+      subtitle:
+        language === "ar"
+          ? "اشتراكات المشاهدة والموسيقى في مكان واحد."
+          : language === "de"
+          ? "Streaming, TV und Entertainment zusammen."
+          : "Streaming, TV, and entertainment together.",
+      products: products.filter((product) => product.category === "streaming"),
+    },
+    {
+      key: "creative" as const,
+      title: language === "ar" ? "Adobe و Canva" : language === "de" ? "Adobe & Canva" : "Adobe & Canva",
+      subtitle:
+        language === "ar"
+          ? "أدوات التصميم والإبداع بشكل منفصل وواضح."
+          : language === "de"
+          ? "Design- und Kreativ-Tools sauber getrennt."
+          : "Design and creativity tools, clearly separated.",
+      products: products.filter((product) => product.category === "creative"),
+    },
+    {
+      key: "services" as const,
+      title: language === "ar" ? "AI Services" : language === "de" ? "AI Services" : "AI Services",
+      subtitle:
+        language === "ar"
+          ? "خدمات مثل ChatGPT و Gemini للكتابة والعمل والدراسة."
+          : language === "de"
+          ? "Services wie ChatGPT und Gemini für Arbeit, Lernen und Content."
+          : "Services like ChatGPT and Gemini for work, study, and content.",
+      products: products.filter((product) => product.category === "services"),
+    },
+  ];
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45 }}
-      className="min-h-screen"
+      className="rivo-site-animated min-h-screen"
       dir={t.dir}
     >
       {/* NAVBAR */}
-      <nav className="fixed top-0 z-50 w-full border-b border-border/70 bg-background/70 backdrop-blur-xl">
+      <nav className="rivo-nav fixed top-0 z-50 w-full border-b border-border/70 bg-background/70 backdrop-blur-xl">
         <div className="container mx-auto flex items-center justify-between gap-2 px-3 py-2 md:gap-3 md:px-6 md:py-5">
           <Link to="/" aria-label="Home" className="inline-flex items-center">
-
-            <Link to="/" aria-label="Home" className="inline-flex items-center">
-
-
-              <RivoLogo className="h-7 w-[90px] md:h-16 md:w-[210px]" />
-
-
-            </Link>
-
+            <RivoLogo className="h-7 w-[90px] md:h-16 md:w-[210px]" />
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex flex-wrap items-center gap-4 text-base font-medium text-muted-foreground">
-            <Link to="/products" className="nav-link-fx px-1 py-1 text-muted-foreground">
-              {t.nav?.products ?? "Products"}
-            </Link>
             <a href="#products" className="nav-link-fx px-1 py-1 text-muted-foreground">
-              {t.nav?.categories ?? "Categories"}
+              {t.nav?.products ?? "Products"}
+            </a>
+            <a href="#cart" className="nav-link-fx px-1 py-1 text-muted-foreground">
+              {language === "ar" ? "السلة" : language === "de" ? "Warenkorb" : "Cart"}
             </a>
             <a href="#faq" className="nav-link-fx px-1 py-1 text-muted-foreground">
               {t.nav?.faq ?? "FAQ"}
@@ -154,60 +217,28 @@ const Index = () => {
               {t.nav?.contact ?? "Contact"}
             </a>
 
-            <div
-              className="inline-flex items-center gap-1 rounded-lg border border-border bg-background/80 p-1"
-              role="group"
-              aria-label={t.language?.switchAria ?? "Switch language"}
-            >
-              {[
-                { code: "ar", flag: "🇸🇦", label: "العربية" },
-                { code: "en", flag: "🇬🇧", label: "English" },
-                { code: "de", flag: "🇩🇪", label: "Deutsch" },
-              ].map((langItem) => (
-                <motion.button
-                  key={langItem.code}
-                  type="button"
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => setLanguage(langItem.code as Language)}
-                  className={`lang-flag-btn ${language === langItem.code ? "active" : ""}`}
-                  title={langItem.label}
-                  aria-label={langItem.label}
-                >
-                  <span aria-hidden="true">{langItem.flag}</span>
-                </motion.button>
-              ))}
-            </div>
+            <LanguageSelector
+              value={language}
+              onChange={setLanguage}
+              ariaLabel={t.language?.switchAria ?? "Switch language"}
+            />
 
-            <button
-              type="button"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="interactive-surface inline-flex items-center gap-2 rounded-lg border border-border bg-background/80 px-4 py-2.5 text-base font-medium text-foreground transition-all hover:bg-muted"
-              aria-label={t.theme?.switchAria ?? "Toggle theme"}
-            >
-              {theme === "dark" ? (
-                <>
-                  <Sun className="h-4 w-4" />
-                  {t.theme?.light ?? "Light"}
-                </>
-              ) : (
-                <>
-                  <Moon className="h-4 w-4" />
-                  {t.theme?.dark ?? "Dark"}
-                </>
-              )}
-            </button>
           </div>
 
           {/* Mobile Controls */}
           <div className="flex items-center gap-2 md:hidden">
-            <button
-              type="button"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-foreground hover:bg-muted"
-              aria-label={t.theme?.switchAria ?? "Toggle theme"}
+            <a
+              href="#cart"
+              className="relative inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-foreground hover:bg-muted"
+              aria-label="Cart"
             >
-              {theme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-            </button>
+              <ShoppingCart className="h-3.5 w-3.5" />
+              {itemCount > 0 ? (
+                <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-black text-primary-foreground">
+                  {itemCount}
+                </span>
+              ) : null}
+            </a>
 
             <button
               type="button"
@@ -258,19 +289,24 @@ const Index = () => {
           <div className="mb-4 h-px bg-border/70" />
 
           <div className="space-y-1">
-            <Link
-              to="/products"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-            >
-              {t.nav?.products ?? "Products"}
-            </Link>
             <a
               href="#products"
               onClick={() => setMobileMenuOpen(false)}
               className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
             >
-              {t.nav?.categories ?? "Categories"}
+              {t.nav?.products ?? "Products"}
+            </a>
+            <a
+              href="#cart"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              <span>{language === "ar" ? "السلة" : language === "de" ? "Warenkorb" : "Cart"}</span>
+              {itemCount > 0 ? (
+                <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-black text-primary-foreground">
+                  {itemCount}
+                </span>
+              ) : null}
             </a>
             <a
               href="#faq"
@@ -294,44 +330,14 @@ const Index = () => {
             <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
               {t.language?.switchAria ?? "Switch language"}
             </p>
-            <div className="flex items-center gap-2">
-              {[
-                { code: "ar", flag: "🇸🇦", label: "العربية" },
-                { code: "en", flag: "🇬🇧", label: "English" },
-                { code: "de", flag: "🇩🇪", label: "Deutsch" },
-              ].map((langItem) => (
-                <button
-                  key={langItem.code}
-                  type="button"
-                  onClick={() => setLanguage(langItem.code as Language)}
-                  className={`lang-flag-btn ${language === langItem.code ? "active" : ""}`}
-                  title={langItem.label}
-                  aria-label={langItem.label}
-                >
-                  <span aria-hidden="true">{langItem.flag}</span>
-                </button>
-              ))}
-            </div>
+            <LanguageSelector
+              value={language}
+              onChange={setLanguage}
+              ariaLabel={t.language?.switchAria ?? "Switch language"}
+              compact
+            />
           </div>
 
-          <button
-            type="button"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background/80 px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
-            aria-label={t.theme?.switchAria ?? "Toggle theme"}
-          >
-            {theme === "dark" ? (
-              <>
-                <Sun className="h-4 w-4" />
-                {t.theme?.light ?? "Light"}
-              </>
-            ) : (
-              <>
-                <Moon className="h-4 w-4" />
-                {t.theme?.dark ?? "Dark"}
-              </>
-            )}
-          </button>
         </div>
       </nav>
 
@@ -344,6 +350,8 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/25 via-background/35 to-background/90" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.14),transparent_35%),radial-gradient(circle_at_80%_30%,rgba(56,189,248,0.10),transparent_40%)]" />
+        <div className="hero-energy-grid" aria-hidden="true" />
+        <TextParticles language={language} />
 
         <motion.div
           variants={fadeInUp}
@@ -352,7 +360,7 @@ const Index = () => {
           className="container relative z-10 mx-auto px-6 pt-20 pb-10 md:pt-28"
         >
           <div className="hero-grid">
-            <div className="hero-shell">
+            <div className="hero-shell hero-shell-kinetic">
               <div className="mb-4 inline-flex">
                 <span className="hero-badge">
                   <span className="hero-badge-dot" />
@@ -385,17 +393,17 @@ const Index = () => {
                 {t.hero?.subtitle ?? ""}
               </motion.p>
 
-              <div className="mb-7 flex flex-wrap gap-2">
-                <span className="hero-chip">
+              <motion.div variants={chipContainer} initial="hidden" animate="visible" className="mb-7 flex flex-wrap gap-2">
+                <motion.span variants={chipItem} className="hero-chip">
                   ⚡ {language === "ar" ? "تفعيل سريع" : language === "de" ? "Schnelle Aktivierung" : "Quick activation"}
-                </span>
-                <span className="hero-chip">
+                </motion.span>
+                <motion.span variants={chipItem} className="hero-chip">
                   🔒 {language === "ar" ? "دفع آمن" : language === "de" ? "Sicher zahlen" : "Secure checkout"}
-                </span>
-                <span className="hero-chip">
+                </motion.span>
+                <motion.span variants={chipItem} className="hero-chip">
                   💬 {language === "ar" ? "دعم سريع" : language === "de" ? "Schneller Support" : "Fast support"}
-                </span>
-              </div>
+                </motion.span>
+              </motion.div>
 
               <div className="flex flex-wrap items-center gap-3">
                 <motion.a
@@ -429,6 +437,7 @@ const Index = () => {
               transition={{ delay: 0.15, duration: 0.5 }}
               className="hero-panel p-4 md:p-5"
             >
+              <div className="hero-scan-line" />
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-bold text-foreground">
@@ -447,16 +456,16 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="mb-3 grid grid-cols-2 gap-3">
-                <div className="metric-card">
+              <motion.div variants={metricContainer} initial="hidden" animate="visible" className="mb-3 grid grid-cols-2 gap-3">
+                <motion.div variants={metricItem} className="metric-card">
                   <div className="mb-1 flex items-center justify-between">
                     <div className="metric-value">24/7</div>
                     <span className="text-base">🛟</span>
                   </div>
                   <div className="metric-label font-medium">{language === "ar" ? "دعم" : "Support"}</div>
-                </div>
+                </motion.div>
 
-                <div className="metric-card">
+                <motion.div variants={metricItem} className="metric-card">
                   <div className="mb-1 flex items-center justify-between">
                     <div className="metric-value">+99%</div>
                     <span className="text-base">⭐</span>
@@ -464,9 +473,9 @@ const Index = () => {
                   <div className="metric-label font-medium">
                     {language === "ar" ? "رضا العملاء" : language === "de" ? "Kundenzufriedenheit" : "Satisfaction"}
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="metric-card">
+                <motion.div variants={metricItem} className="metric-card">
                   <div className="mb-1 flex items-center justify-between">
                     <div className="metric-value">⚡</div>
                     <span className="text-base">🚀</span>
@@ -474,9 +483,9 @@ const Index = () => {
                   <div className="metric-label font-medium">
                     {language === "ar" ? "تفعيل فوري" : language === "de" ? "Sofort aktiv" : "Instant delivery"}
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="metric-card">
+                <motion.div variants={metricItem} className="metric-card">
                   <div className="mb-1 flex items-center justify-between">
                     <div className="metric-value">🔐</div>
                     <span className="text-base">🛡️</span>
@@ -484,21 +493,22 @@ const Index = () => {
                   <div className="metric-label font-medium">
                     {language === "ar" ? "أمان" : language === "de" ? "Sicher" : "Secure"}
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
 
               <div className="rounded-2xl border border-border bg-background/70 p-4">
                 <p className="mb-3 text-xs font-extrabold tracking-wider text-primary/90">
                   {language === "ar" ? "مميزات" : "HIGHLIGHTS"}
                 </p>
 
-                <div className="space-y-2 text-sm text-foreground">
+                <motion.div variants={featureContainer} initial="hidden" animate="visible" className="space-y-2 text-sm text-foreground">
                   {[
                     { icon: "📺", ar: "اشتراكات رقمية", en: "Digital subscriptions", de: "Digitale Abos" },
                     { icon: "💸", ar: "أسعار مناسبة", en: "Fair pricing", de: "Faire Preise" },
                     { icon: "💬", ar: "دعم مباشر", en: "Direct support", de: "Direkter Support" },
                   ].map((row) => (
-                    <div
+                    <motion.div
+                      variants={featureItem}
                       key={row.en}
                       className="flex items-center justify-between rounded-xl border border-border/70 bg-background/70 px-3 py-2.5 transition-all hover:border-primary/25 hover:bg-background"
                     >
@@ -507,17 +517,20 @@ const Index = () => {
                         <span className="font-semibold">{row[language]}</span>
                       </div>
                       <span className="font-bold text-primary">✓</span>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
         </motion.div>
       </section>
 
+      {/* CELESTIAL SHOWCASE */}
+      <CelestialShowcase />
+
       {/* PRODUCTS */}
-      <section id="products" className="py-24">
+      <section id="products" className="product-section-stage py-24">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0 }}
@@ -531,22 +544,40 @@ const Index = () => {
             <p className="text-muted-foreground">{t.products?.subtitle ?? ""}</p>
           </motion.div>
 
-          <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {(products ?? []).map((product, i) => (
-              <ProductCard
-                key={product.slug}
-                product={product}
-                index={i}
-                language={language}
-                viewDetailsLabel={t.products?.viewDetails ?? "View details"}
-              />
+          <div className="space-y-14">
+            {productSections.map((section) => (
+              <motion.div
+                key={section.key}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-90px" }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <div className="section-heading-kinetic mb-5 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <h3 className="text-2xl font-black text-foreground">{section.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{section.subtitle}</p>
+                  </div>
+                  <div className="hidden h-px flex-1 bg-border/60 sm:block" />
+                </div>
+
+                <ProductShowcase
+                  products={section.products}
+                  language={language}
+                  exploreLabel={language === "ar" ? "استكشف" : language === "de" ? "Entdecken" : "Explore"}
+                  productDetailsLabel={t.products?.openDetails ?? "Open details"}
+                  ctaLabel={t.products?.viewDetails ?? "View details"}
+                  addToCartLabel={language === "ar" ? "أضف للسلة" : language === "de" ? "In den Warenkorb" : "Add to cart"}
+                  onAddToCart={addProductToCart}
+                />
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PRICING */}
-      
+      <CartSection language={language} browseHref="#products" />
+
       {/* FAQ */}
       <FAQSection language={language} />
 
@@ -599,3 +630,4 @@ const Index = () => {
 };
 
 export default Index;
+

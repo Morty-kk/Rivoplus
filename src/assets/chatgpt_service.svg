@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" fill="none">
+  <rect width="1200" height="1200" rx="64" fill="#111827"/>
+  <rect x="120" y="160" width="960" height="780" rx="56" fill="#0F172A"/>
+  <circle cx="600" cy="460" r="190" fill="#10A37F"/>
+  <path d="M520 380h210c48 0 88 39 88 88s-40 88-88 88H609l-88 82v-82h-1c-49 0-88-39-88-88s39-88 88-88Z" fill="white" fill-opacity=".92"/>
+  <path d="M500 734h200" stroke="#10A37F" stroke-width="34" stroke-linecap="round"/>
+  <path d="M430 812h340" stroke="#334155" stroke-width="28" stroke-linecap="round"/>
+  <text x="600" y="1020" text-anchor="middle" fill="white" font-family="Inter, Arial, sans-serif" font-size="92" font-weight="800">ChatGPT</text>
+</svg>

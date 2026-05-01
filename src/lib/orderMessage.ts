@@ -62,13 +62,21 @@ export function buildOrderMessage(args: {
   if (slug === "music" && args.music) {
     const { value, prices } = args.music;
     const amount = getMusicPrice(prices, value);
-    const serviceLabel = value.service === "spotify" ? "Spotify" : "YouTube Premium";
-    const tierLabel =
-      value.service === "spotify" ? (value.tier === "duo" ? "Premium Duo" : "Premium") : "Premium";
+    return [
+      `${t.hello[language]} YouTube Premium`,
+      `${t.plan[language]}: Premium`,
+      `${t.duration[language]}: ${formatDuration(language, value.durationMonths)}`,
+      `${t.price[language]}: ${fmtPrice(amount, currency, language)}`,
+    ].join("\n");
+  }
+
+  if ((slug === "adobe" || slug === "canva") && args.creativity) {
+    const service = slug === "adobe" ? "adobe" : "canva";
+    const amount = args.creativity.prices?.[service]?.[12] ?? null;
+    const serviceLabel = service === "adobe" ? "Adobe Creative Cloud" : "Canva Pro";
     return [
       `${t.hello[language]} ${serviceLabel}`,
-      `${t.plan[language]}: ${tierLabel}`,
-      `${t.duration[language]}: ${formatDuration(language, value.durationMonths as any)}`,
+      `${t.duration[language]}: ${formatDuration(language, 12)}`,
       `${t.price[language]}: ${fmtPrice(amount, currency, language)}`,
     ].join("\n");
   }
@@ -79,7 +87,7 @@ export function buildOrderMessage(args: {
     const serviceLabel = value.service === "adobe" ? "Adobe Creative Cloud" : "Canva Pro";
     return [
       `${t.hello[language]} ${serviceLabel}`,
-      `${t.duration[language]}: ${formatDuration(language, value.durationMonths as any)}`,
+      `${t.duration[language]}: ${formatDuration(language, value.durationMonths)}`,
       `${t.price[language]}: ${fmtPrice(amount, currency, language)}`,
     ].join("\n");
   }

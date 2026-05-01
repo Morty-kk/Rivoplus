@@ -35,12 +35,14 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-1.5rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4",
-        "rounded-2xl border border-border bg-background/60 p-6 shadow-xl backdrop-blur-2xl",
+        "fixed inset-x-3 bottom-3 top-auto z-50 grid max-h-[calc(100dvh-1.5rem)] w-auto translate-x-0 translate-y-0 gap-4 overflow-hidden",
+        "rounded-2xl border border-border bg-background/80 p-5 shadow-xl backdrop-blur-2xl",
+        "sm:left-[50%] sm:top-[50%] sm:bottom-auto sm:w-[calc(100%-1.5rem)] sm:max-w-lg sm:translate-x-[-50%] sm:translate-y-[-50%] sm:p-6",
         "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        "data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%]",
+        "data-[state=closed]:slide-out-to-bottom-5 data-[state=open]:slide-in-from-bottom-5",
+        "sm:data-[state=closed]:slide-out-to-top-[48%] sm:data-[state=open]:slide-in-from-top-[48%]",
         "touch-manipulation",
         className,
       )}

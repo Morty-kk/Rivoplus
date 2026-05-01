@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShoppingCart, X } from "lucide-react";
 import RivoLogo from "@/components/RivoLogo";
 import PaymentMethods from "@/components/PaymentMethods";
 import TvPlanSelector, { type TvPlanSelectorValue, type TvPriceTable } from "@/components/TvPlanSelector";
@@ -11,8 +11,12 @@ import CreativityPlanSelector, {
 } from "@/components/CreativityPlanSelector";
 import OrderLinks from "@/components/OrderLinks";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { buildOrderMessage } from "@/lib/orderMessage";
+import { useCart } from "@/lib/cart";
+import { buildCartItem } from "@/lib/productSelection";
+import { useToast } from "@/hooks/use-toast";
 import { copy, products, type Language } from "./index-content";
 import adobePic from "../assets/adobe_pic.png";
 import adobePicAr from "../assets/adobe_pic_ar.png";
@@ -41,109 +45,11 @@ const i18n = {
 
 export default function ProductDetails() {
   const { slug } = useParams();
-  const language = getSavedLanguage();
+  const [language, setLanguage] = React.useState<Language>(getSavedLanguage);
   const t = copy[language];
   const product = products.find((p) => p.slug === slug);
-
-  // when the games product is selected we don’t show the normal detail page;
-  // instead render a more polished “coming soon” screen with product branding.
-  if (slug === "games") {
-    const msg =
-      language === "ar"
-        ? "الألعاب السحابية ستصل قريباً مع تجربة لعب فورية على جميع الأجهزة. تابعنا الآن للحصول على التحديثات."
-        : language === "de"
-        ? "Cloud-Gaming kommt bald — spiele sofort auf jedem Gerät. Folge uns für Updates."
-        : "Cloud gaming is coming soon — play instantly on every device. Follow us for updates.";
-
-    return (
-      <div
-        dir={t.dir}
-        className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_25%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.16),_transparent_20%),bg-slate-950] text-white"
-      >
-        <div className="container mx-auto px-4 py-10 lg:py-16">
-          <div className="mb-8 flex items-center justify-between gap-4 rounded-3xl border border-white/10 bg-slate-900/70 px-5 py-4 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
-            <div className="flex items-center gap-3">
-              <RivoLogo className="h-11 w-[110px]" />
-              <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/90">{product?.title[language]}</p>
-                <p className="mt-1 text-sm text-slate-300">{t.products.subtitle}</p>
-              </div>
-            </div>
-            <Link
-              to="/products"
-              className="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-cyan-500/10 transition hover:bg-white/20"
-            >
-              {language === "ar" ? "عد إلى المنتجات" : language === "de" ? "Zurück zu Produkten" : "Back to products"}
-            </Link>
-          </div>
-
-          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.9fr] items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-cyan-500/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200">
-                {language === "ar" ? "قريباً" : language === "de" ? "Bald verfügbar" : "Coming soon"}
-              </div>
-              <h1 className="text-4xl font-black leading-tight text-white md:text-5xl lg:text-6xl">
-                {language === "ar"
-                  ? "تجربة ألعاب سحابية جديدة"
-                  : language === "de"
-                  ? "Dein neues Cloud-Gaming-Erlebnis"
-                  : "Your next cloud gaming experience"}
-              </h1>
-              <p className="max-w-xl text-base leading-8 text-slate-300 md:text-lg">
-                {msg}
-              </p>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                {product?.highlights[language].map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-slate-100 shadow-sm shadow-slate-950/10"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  to="/products"
-                  className="inline-flex items-center justify-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
-                >
-                  {language === "ar" ? "اكتشف باقي المنتجات" : language === "de" ? "Weitere Produkte ansehen" : "Explore other products"}
-                </Link>
-                <a
-                  href="https://t.me/rivoplus"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
-                >
-                  {language === "ar" ? "احصل على إشعار" : language === "de" ? "Benachrichtigt werden" : "Get notified"}
-                </a>
-              </div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/90 shadow-2xl shadow-slate-950/40">
-              <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cyan-400/10 to-transparent" />
-              <img
-                src={product?.heroImage}
-                alt={product?.title[language] ?? "Games"}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent px-6 py-5 text-slate-100">
-                <p className="text-sm uppercase tracking-[0.4em] text-cyan-200/90">
-                  {language === "ar" ? "قريباً" : language === "de" ? "Bald" : "Soon"}
-                </p>
-                <p className="mt-2 text-lg font-semibold">
-                  {language === "ar" ? "لعبة بدون تأخير" : language === "de" ? "Lag-free Gaming" : "Lag-free gaming"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
   const [tvValue, setTvValue] = React.useState<TvPlanSelectorValue>({
     plan: "gold",
@@ -165,6 +71,18 @@ export default function ProductDetails() {
 
   const [imageModalOpen, setImageModalOpen] = React.useState(false);
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleLanguageChange = (event: Event) => {
+      const nextLanguage = (event as CustomEvent<Language>).detail;
+      if (nextLanguage === "ar" || nextLanguage === "en" || nextLanguage === "de") {
+        setLanguage(nextLanguage);
+      }
+    };
+
+    window.addEventListener("rivo-language-change", handleLanguageChange);
+    return () => window.removeEventListener("rivo-language-change", handleLanguageChange);
+  }, []);
 
   const openImageModal = (imageSrc: string) => {
     setSelectedImage(imageSrc);
@@ -207,7 +125,7 @@ export default function ProductDetails() {
   const musicPrices: MusicPrices = React.useMemo(
     () => ({
       youtube: {
-        premium: { 1: 7, 3: 18, 6: 28, 12: 40 },
+        premium: 40,
       },
     }),
     [],
@@ -233,7 +151,7 @@ export default function ProductDetails() {
           </Link>
           <div className="mt-10 glass rounded-2xl p-6">
             <p className="mb-4 text-lg font-bold">{i18n.notFound[language]}</p>
-            <Link to="/products" className="btn-primary">
+            <Link to="/#products" className="btn-primary">
               {i18n.backToHome[language]}
             </Link>
           </div>
@@ -257,6 +175,26 @@ export default function ProductDetails() {
     music: { value: musicValue, prices: musicPrices },
     creativity: { value: creativityValue, prices: creativityPrices },
   });
+
+  const addCurrentSelectionToCart = () => {
+    addItem(
+      buildCartItem({
+        product,
+        language,
+        tv: { value: tvValue, prices: tvPrices },
+        music: { value: musicValue, prices: musicPrices },
+        creativity: { value: creativityValue, prices: creativityPrices },
+      }),
+    );
+    toast({
+      title:
+        language === "ar"
+          ? "تمت الإضافة إلى السلة"
+          : language === "de"
+          ? "Zum Warenkorb hinzugefügt"
+          : "Added to cart",
+    });
+  };
 
   const heroLayout = product.heroImageLayout ?? {
     mobileHeightPx: 340,
@@ -293,7 +231,7 @@ export default function ProductDetails() {
         <div className="mb-4 md:mb-6 flex items-center justify-between gap-3">
           <RivoLogo className="h-8 md:h-10 w-[100px] md:w-[130px] lg:h-14 lg:w-[180px]" />
           <Link
-            to="/products"
+            to="/#products"
             className="inline-flex items-center gap-2 rounded-lg md:rounded-xl border border-border bg-background/40 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold backdrop-blur-md hover:bg-muted/40 flex-shrink-0"
           >
             <ArrowIcon className="h-3 w-3 md:h-4 md:w-4" />
@@ -301,11 +239,11 @@ export default function ProductDetails() {
           </Link>
         </div>
 
-        <div className="glass overflow-hidden rounded-2xl border border-border">
+        <div className="detail-kinetic-shell glass overflow-hidden rounded-2xl border border-border">
           <div className="grid gap-0 grid-cols-1 lg:grid-cols-2">
             {/* IMAGE SECTION */}
             <div
-              className="relative overflow-hidden border-b border-border lg:border-b-0 flex items-center justify-center bg-gradient-to-br from-background to-background/80 rounded-b-2xl lg:rounded-b-none cursor-pointer"
+              className="detail-image-stage relative overflow-hidden border-b border-border lg:border-b-0 flex items-center justify-center bg-gradient-to-br from-background to-background/80 rounded-b-2xl lg:rounded-b-none cursor-pointer"
               style={{
                 aspectRatio: "1 / 1",
               }}
@@ -315,7 +253,7 @@ export default function ProductDetails() {
                 <img
                   src={t.dir === "rtl" ? displayHeroImageAr : displayHeroImage}
                   alt={product.title[language]}
-                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-200"
+                  className="detail-main-image w-full h-full object-contain hover:scale-105 transition-transform duration-200"
                   style={{
                     objectFit: "contain",
                     objectPosition: "center",
@@ -334,7 +272,7 @@ export default function ProductDetails() {
             </div>
 
             {/* CONTENT SECTION */}
-            <div className="p-5 md:p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto">
+            <div className="detail-content-stage p-5 md:p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto">
               <div className="flex items-start gap-3 md:gap-4">
                 <div className="product-card-icon-wrap mt-0.5 flex-shrink-0">
                   <product.icon className="h-6 w-6 md:h-7 md:w-7 text-primary" />
@@ -399,6 +337,15 @@ export default function ProductDetails() {
                     className="flex flex-wrap gap-2 md:gap-3"
                   />
 
+                  <Button
+                    type="button"
+                    onClick={addCurrentSelectionToCart}
+                    className="mt-3 h-12 w-full gap-2 rounded-xl md:w-auto"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    {language === "ar" ? "أضف إلى السلة" : language === "de" ? "In den Warenkorb" : "Add to cart"}
+                  </Button>
+
                   {product.offer ? (
                     <p className="mt-2.5 text-xs text-muted-foreground">
                       {language === "ar"
@@ -418,7 +365,7 @@ export default function ProductDetails() {
                         key={srcImg}
                         src={srcImg}
                         alt={product.title[language]}
-                        className="h-24 w-32 md:h-28 md:w-44 shrink-0 rounded-lg border border-border object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                        className="detail-gallery-thumb h-24 w-32 md:h-28 md:w-44 shrink-0 rounded-lg border border-border object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
                         loading="lazy"
                         onClick={() => openImageModal(srcImg)}
                       />
@@ -434,7 +381,7 @@ export default function ProductDetails() {
 
         {/* Image Modal */}
         <Dialog open={imageModalOpen} onOpenChange={setImageModalOpen}>
-          <DialogContent className="max-w-4xl w-full h-full max-h-[90vh] p-0 bg-transparent border-none shadow-none">
+          <DialogContent className="inset-0 bottom-auto left-0 top-0 h-full max-h-none w-full max-w-none translate-x-0 translate-y-0 rounded-none border-none bg-transparent p-0 shadow-none sm:left-[50%] sm:top-[50%] sm:h-full sm:max-h-[90vh] sm:max-w-4xl sm:translate-x-[-50%] sm:translate-y-[-50%]">
             <div className="relative w-full h-full flex items-center justify-center">
               <button
                 onClick={() => setImageModalOpen(false)}
