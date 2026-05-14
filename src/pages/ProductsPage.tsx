@@ -21,6 +21,7 @@ import { useCart } from "@/lib/cart";
 import { buildCartItem } from "@/lib/productSelection";
 import { useToast } from "@/hooks/use-toast";
 import { copy, products, type Language, type Product } from "./index-content";
+import { RIVO_WHATSAPP_PHONE, RIVO_TELEGRAM_USERNAME } from "@/config/contact";
 
 const getLanguage = (): Language => {
   if (typeof window === "undefined") return "ar";
@@ -155,8 +156,6 @@ export default function ProductsPage() {
     [],
   );
 
-  const WHATSAPP_PHONE = "963980582206";
-  const TELEGRAM_USERNAME = "rivoplus";
 
   const orderMessage = React.useMemo(() => {
     if (!selected) return "";
@@ -376,8 +375,8 @@ export default function ProductsPage() {
                     </div>
                     <div className="mt-3">
                       <OrderLinks
-                        whatsappPhoneE164={WHATSAPP_PHONE}
-                        telegramUsername={TELEGRAM_USERNAME}
+                        whatsappPhoneE164={RIVO_WHATSAPP_PHONE}
+                        telegramUsername={RIVO_TELEGRAM_USERNAME}
                         whatsappMessage={orderMessage}
                       />
                     </div>

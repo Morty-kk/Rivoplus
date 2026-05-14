@@ -16,6 +16,7 @@ import type { TvPriceTable } from "@/components/TvPlanSelector";
 import type { MusicPrices } from "@/components/MusicPlanSelector";
 import type { CreativityPrices } from "@/components/CreativityPlanSelector";
 import { copy, products, type Language, type Product } from "./index-content";
+import { RIVO_WHATSAPP_PHONE, RIVO_TELEGRAM_USERNAME } from "@/config/contact";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 16 },
@@ -91,7 +92,7 @@ const getInitialLanguage = (): Language => {
 
 const Index = () => {
   // configure this to the WhatsApp URL you want the trial button to open
-  const WHATSAPP_TRIAL_LINK = "https://wa.me/963980582206?text=I%20want%20the%2024h%20trial";
+  const WHATSAPP_TRIAL_LINK = `https://wa.me/${RIVO_WHATSAPP_PHONE}?text=I%20want%20the%2024h%20trial`;
 
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -599,7 +600,7 @@ const Index = () => {
 
             <div className="flex flex-wrap justify-center gap-3">
               <a
-                href="https://wa.me/963980582206"
+                href={`https://wa.me/${RIVO_WHATSAPP_PHONE}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary interactive-surface inline-flex items-center gap-2"
@@ -609,7 +610,7 @@ const Index = () => {
               </a>
 
               <a
-                href="https://t.me/dein_telegram_name"
+                href={`https://t.me/${RIVO_TELEGRAM_USERNAME}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="interactive-surface inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 font-bold text-foreground hover:bg-muted"

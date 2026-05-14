@@ -18,6 +18,7 @@ import { useCart } from "@/lib/cart";
 import { buildCartItem } from "@/lib/productSelection";
 import { useToast } from "@/hooks/use-toast";
 import { copy, products, type Language } from "./index-content";
+import { RIVO_WHATSAPP_PHONE, RIVO_TELEGRAM_USERNAME } from "@/config/contact";
 import adobePic from "../assets/adobe_pic.png";
 import adobePicAr from "../assets/adobe_pic_ar.png";
 import canvaPic from "../assets/canva_pic.png";
@@ -139,8 +140,6 @@ export default function ProductDetails() {
     [],
   );
 
-  const WHATSAPP_PHONE = "963980582206";
-  const TELEGRAM_USERNAME = "rivoplus";
 
   if (!product) {
     return (
@@ -331,8 +330,8 @@ export default function ProductDetails() {
                   <p className="text-xs md:text-sm text-muted-foreground mb-3">{i18n.orderText[language]}</p>
 
                   <OrderLinks
-                    whatsappPhoneE164={WHATSAPP_PHONE}
-                    telegramUsername={TELEGRAM_USERNAME}
+                    whatsappPhoneE164={RIVO_WHATSAPP_PHONE}
+                    telegramUsername={RIVO_TELEGRAM_USERNAME}
                     whatsappMessage={orderMessage}
                     className="flex flex-wrap gap-2 md:gap-3"
                   />
