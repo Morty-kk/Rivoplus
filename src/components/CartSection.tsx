@@ -15,6 +15,7 @@ const text = {
   continue: { ar: "تصفح المنتجات", en: "Browse products", de: "Produkte ansehen" },
   total: { ar: "المجموع", en: "Total", de: "Gesamt" },
   onRequest: { ar: "حسب الطلب", en: "On request", de: "Auf Anfrage" },
+  whatsappCta: { ar: "أكمل طلبك عبر واتساب", en: "Complete order via WhatsApp", de: "Bestellung via WhatsApp" },
   copy: { ar: "نسخ الرسالة", en: "Copy message", de: "Nachricht kopieren" },
   copied: { ar: "تم نسخ الرسالة", en: "Message copied", de: "Nachricht kopiert" },
   clear: { ar: "إفراغ السلة", en: "Clear cart", de: "Warenkorb leeren" },
@@ -174,7 +175,7 @@ export default function CartSection({ language, browseHref = "/#products" }: Car
                 <Button asChild className="h-12 rounded-xl">
                   <a href={whatsappUrl} target="_blank" rel="noreferrer">
                     <MessageCircle className="h-4 w-4" />
-                    WhatsApp
+                    {text.whatsappCta[language]}
                   </a>
                 </Button>
                 <Button asChild variant="secondary" className="h-12 rounded-xl">

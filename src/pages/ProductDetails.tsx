@@ -333,6 +333,7 @@ export default function ProductDetails() {
                     whatsappPhoneE164={RIVO_WHATSAPP_PHONE}
                     telegramUsername={RIVO_TELEGRAM_USERNAME}
                     whatsappMessage={orderMessage}
+                    language={language}
                     className="flex flex-wrap gap-2 md:gap-3"
                   />
 
