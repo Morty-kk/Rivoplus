@@ -1,4 +1,5 @@
 import * as React from "react";
+import { isSafeUrl } from "@/lib/utils";
 
 export type CartItem = {
   id: string;
@@ -30,7 +31,11 @@ function readCart(): CartItem[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((item) => ({
+      ...item,
+      image: typeof item.image === "string" && isSafeUrl(item.image) ? item.image : "",
+    }));
   } catch {
     return [];
   }

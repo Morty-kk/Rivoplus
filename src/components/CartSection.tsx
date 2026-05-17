@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cart";
 import { buildCartCheckoutMessage } from "@/lib/productSelection";
 import type { Language } from "@/pages/index-content";
 import { RIVO_ORDER_EMAIL, RIVO_TELEGRAM_USERNAME, RIVO_WHATSAPP_PHONE } from "@/config/contact";
+import { isSafeUrl } from "@/lib/utils";
 
 const text = {
   title: { ar: "السلة", en: "Cart", de: "Warenkorb" },
@@ -31,6 +32,7 @@ type CartSectionProps = {
 };
 
 export default function CartSection({ language, browseHref = "/#products" }: CartSectionProps) {
+  const safeBrowseHref = isSafeUrl(browseHref) ? browseHref : "/#products";
   const { items, itemCount, updateQuantity, removeItem, clearCart } = useCart();
   const { toast } = useToast();
 
@@ -75,7 +77,7 @@ export default function CartSection({ language, browseHref = "/#products" }: Car
           </div>
 
           <Button asChild variant="secondary" className="rounded-xl">
-            <a href={browseHref}>{text.continue[language]}</a>
+            <a href={safeBrowseHref}>{text.continue[language]}</a>
           </Button>
         </motion.div>
 
@@ -89,7 +91,7 @@ export default function CartSection({ language, browseHref = "/#products" }: Car
           >
             <p className="mb-5 text-muted-foreground">{text.empty[language]}</p>
             <Button asChild className="rounded-xl">
-              <a href={browseHref}>{text.continue[language]}</a>
+              <a href={safeBrowseHref}>{text.continue[language]}</a>
             </Button>
           </motion.div>
         ) : (
