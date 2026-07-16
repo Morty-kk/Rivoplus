@@ -1,3 +1,4 @@
+import * as React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Language } from "@/pages/index-content";
@@ -23,6 +24,9 @@ export default function LanguageSelector({
   compact = false,
   className,
 }: LanguageSelectorProps) {
+  // Unique per instance: this selector is mounted twice on the page (desktop
+  // nav + mobile drawer); a shared layoutId would animate between the two.
+  const layoutId = React.useId();
   return (
     <div
       role="radiogroup"
@@ -53,7 +57,7 @@ export default function LanguageSelector({
           >
             {selected ? (
               <motion.span
-                layoutId="language-selector-bg"
+                layoutId={layoutId}
                 className="absolute inset-0 rounded-lg bg-primary shadow-sm"
                 transition={{ type: "spring", stiffness: 520, damping: 38 }}
               />

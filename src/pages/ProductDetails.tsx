@@ -85,6 +85,10 @@ export default function ProductDetails() {
     return () => window.removeEventListener("rivo-language-change", handleLanguageChange);
   }, []);
 
+  React.useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
   const openImageModal = (imageSrc: string) => {
     setSelectedImage(imageSrc);
     setImageModalOpen(true);
@@ -155,11 +159,6 @@ export default function ProductDetails() {
             </Link>
           </div>
         </div>
-
-        {/* Image Modal - not used on not found page */}
-        <Dialog open={false} onOpenChange={() => {}}>
-          <DialogContent></DialogContent>
-        </Dialog>
       </div>
     );
   }
@@ -242,11 +241,20 @@ export default function ProductDetails() {
           <div className="grid gap-0 grid-cols-1 lg:grid-cols-2">
             {/* IMAGE SECTION */}
             <div
+              role="button"
+              tabIndex={0}
+              aria-label={product.title[language]}
               className="detail-image-stage relative overflow-hidden border-b border-border lg:border-b-0 flex items-center justify-center bg-gradient-to-br from-background to-background/80 rounded-b-2xl lg:rounded-b-none cursor-pointer"
               style={{
                 aspectRatio: "1 / 1",
               }}
-              onClick={() => openImageModal(product.heroImage)}
+              onClick={() => openImageModal(t.dir === "rtl" ? displayHeroImageAr : displayHeroImage)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openImageModal(t.dir === "rtl" ? displayHeroImageAr : displayHeroImage);
+                }
+              }}
             >
               <div className="w-full h-full flex items-center justify-center">
                 <img
@@ -360,14 +368,20 @@ export default function ProductDetails() {
                   <h2 className="text-sm md:text-base font-bold text-foreground mb-3">{i18n.gallery[language]}</h2>
                   <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 -mx-5 md:-mx-6 lg:-mx-8 px-5 md:px-6 lg:px-8">
                     {displayGallery.map((srcImg) => (
-                      <img
+                      <button
                         key={srcImg}
-                        src={srcImg}
-                        alt={product.title[language]}
-                        className="detail-gallery-thumb h-24 w-32 md:h-28 md:w-44 shrink-0 rounded-lg border border-border object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                        loading="lazy"
+                        type="button"
+                        className="shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         onClick={() => openImageModal(srcImg)}
-                      />
+                        aria-label={`${i18n.gallery[language]}: ${product.title[language]}`}
+                      >
+                        <img
+                          src={srcImg}
+                          alt={product.title[language]}
+                          className="detail-gallery-thumb h-24 w-32 md:h-28 md:w-44 shrink-0 rounded-lg border border-border object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                          loading="lazy"
+                        />
+                      </button>
                     ))}
                   </div>
                 </section>

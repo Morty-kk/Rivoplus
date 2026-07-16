@@ -108,6 +108,7 @@ const Index = () => {
 
   useEffect(() => {
     window.localStorage.setItem("language", language);
+    document.documentElement.lang = language;
     window.dispatchEvent(new CustomEvent("rivo-language-change", { detail: language }));
     setMobileMenuOpen(false);
   }, [language]);

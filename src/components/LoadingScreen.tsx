@@ -11,23 +11,35 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
     const DURATION = 1800;
     const start = Date.now();
     let raf = 0;
+    let interval = 0;
 
-    const tick = () => {
+    const update = () => {
       const elapsed = Date.now() - start;
       const p = Math.min(100, (elapsed / DURATION) * 100);
       setProgress(p);
-      if (p < 100) {
-        raf = requestAnimationFrame(tick);
-      } else if (!doneRef.current) {
+      if (p >= 100 && !doneRef.current) {
         doneRef.current = true;
+        window.clearInterval(interval);
         setTimeout(() => {
           setFading(true);
           setTimeout(onDone, 550);
         }, 220);
       }
     };
+
+    const tick = () => {
+      update();
+      if (!doneRef.current) raf = requestAnimationFrame(tick);
+    };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    // rAF is throttled or paused entirely in background/occluded tabs; without
+    // this fallback the loading gate can never complete and the app never mounts.
+    interval = window.setInterval(update, 250);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearInterval(interval);
+    };
   }, [onDone]);
 
   const offset = CIRC * (1 - progress / 100);

@@ -35,6 +35,9 @@ export default function AnimatedPillGroup({
   buttonClassName,
   wrap = false,
 }: Props) {
+  // layoutId is global in Framer Motion; multiple pill groups on one page must
+  // not share it, or the highlight animates between unrelated groups.
+  const layoutId = React.useId();
   const selectedIndex = Math.max(
     0,
     options.findIndex((o) => o.key === value),
@@ -71,7 +74,7 @@ export default function AnimatedPillGroup({
           >
             {selected ? (
               <motion.span
-                layoutId="pill-bg"
+                layoutId={layoutId}
                 className="absolute inset-0 rounded-2xl border border-border bg-background/70 shadow-sm backdrop-blur-xl"
                 transition={{ type: "spring", stiffness: 520, damping: 40 }}
               />
