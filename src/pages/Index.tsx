@@ -7,7 +7,6 @@ import RivoLogo from "@/components/RivoLogo";
 import LanguageSelector from "@/components/LanguageSelector";
 import { ProductShowcase } from "@/components/ProductShowcase";
 import CartSection from "@/components/CartSection";
-import { CelestialShowcase } from "@/components/CelestialShowcase";
 import { TextParticles } from "@/components/TextParticles";
 import { useCart } from "@/lib/cart";
 import { buildCartItem } from "@/lib/productSelection";
@@ -527,9 +526,6 @@ const Index = () => {
           </div>
         </motion.div>
       </section>
-
-      {/* CELESTIAL SHOWCASE */}
-      <CelestialShowcase />
 
       {/* PRODUCTS */}
       <section id="products" className="product-section-stage py-24">
