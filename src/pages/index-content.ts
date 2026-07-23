@@ -2,15 +2,15 @@ import { Bot, BrainCircuit, Clapperboard, Music, Palette, Sparkles, Tv } from "l
 import type { LucideIcon } from "lucide-react";
 
 // image assets imported from src so we can keep the files where you added them
-import musicPic from "../assets/music_pic.png";
-import musicPicAr from "../assets/music_pic_ar.png";
+import musicPic from "../assets/music_pic.webp";
+import musicPicAr from "../assets/music_pic_ar.webp";
 import tvPic from "../assets/tv_pic.png";
 import tvPicAr from "../assets/tv_pic_ar.png";
-import tfs from "../assets/247_pic.png";
+import tfs from "../assets/247_pic.webp";
 import adobePic from "../assets/adobe_pic.png";
 import adobePicAr from "../assets/adobe_pic_ar.png";
-import canvaPic from "../assets/canva_pic.png";
-import canvaPicAr from "../assets/canva_pic_ar.png";
+import canvaPic from "../assets/canva_pic.webp";
+import canvaPicAr from "../assets/canva_pic_ar.webp";
 import ytPic from "../assets/yt_pic.png";
 import ytPicAr from "../assets/yt_pic_ar.png";
 import crunchyrollService from "../assets/crunchyroll_service.svg";

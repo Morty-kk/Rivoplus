@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Play, MessageCircle, Send, Menu, X, ShoppingCart } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/hero-bg.webp";
 import RivoLogo from "@/components/RivoLogo";
 import LanguageSelector from "@/components/LanguageSelector";
 import { ProductShowcase } from "@/components/ProductShowcase";

@@ -3,15 +3,16 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Navigate, Routes, Route } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import ScrollToHash from "@/components/ScrollToHash";
 import { CartProvider } from "@/lib/cart";
 import { WallpaperEngine } from "@/components/WallpaperEngine";
 import { LoadingScreen } from "@/components/LoadingScreen";
 
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import ProductDetails from "./pages/ProductDetails";
+// Lazy-loaded so their code (and product-only assets) stays out of the homepage bundle.
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -38,13 +39,15 @@ const App = () => {
               <ScrollToHash />
               <Toaster />
               <Sonner />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/products" element={<Navigate to="/#products" replace />} />
-                <Route path="/product/:slug" element={<ProductDetails />} />
-                <Route path="/cart" element={<Navigate to="/#cart" replace />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <Suspense fallback={null}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/products" element={<Navigate to="/#products" replace />} />
+                  <Route path="/product/:slug" element={<ProductDetails />} />
+                  <Route path="/cart" element={<Navigate to="/#cart" replace />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
             </>
           )}
         </CartProvider>

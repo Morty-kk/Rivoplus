@@ -104,19 +104,46 @@ export function WallpaperEngine() {
     window.addEventListener('click', onClick);
 
     const ctx = canvas.getContext('2d')!;
-    const loop = () => {
+
+    // Respect users who ask for less motion: draw one static frame and stop.
+    // (resize/mousemove/click are already registered above; clean them all up.)
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      drawAurora(ctx, canvas.width, canvas.height, Date.now(), mouseRef.current, ripplesRef.current);
+      return () => {
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('click', onClick);
+      };
+    }
+
+    // Cap the ambient animation to ~30fps — imperceptible for a slow aurora,
+    // but roughly halves the per-second canvas cost on low-end machines.
+    const FRAME_MS = 1000 / 30;
+    let last = 0;
+    const loop = (ts: number) => {
+      rafRef.current = requestAnimationFrame(loop);
+      if (ts - last < FRAME_MS) return;
+      last = ts;
       const now = Date.now();
       ripplesRef.current = ripplesRef.current.filter(r => now - r.born < 5000);
       drawAurora(ctx, canvas.width, canvas.height, now, mouseRef.current, ripplesRef.current);
-      rafRef.current = requestAnimationFrame(loop);
     };
     rafRef.current = requestAnimationFrame(loop);
+
+    // Stop rendering entirely while the tab is hidden; resume on return.
+    const onVisibility = () => {
+      cancelAnimationFrame(rafRef.current);
+      if (!document.hidden) { last = 0; rafRef.current = requestAnimationFrame(loop); }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('click', onClick);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
   }, []);
 

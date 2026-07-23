@@ -2,9 +2,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 // payment logo images (placed in src/assets)
-import paypalImg from "../assets/paypal_pm_pic.png";
-import visaImg from "../assets/visa_pm_pic.png";
-import mastercardImg from "../assets/mastercard_pm_pic.png";
+import paypalImg from "../assets/paypal_pm_pic.webp";
+import visaImg from "../assets/visa_pm_pic.webp";
+import mastercardImg from "../assets/mastercard_pm_pic.webp";
 
 type PaymentMethodsProps = {
   className?: string;

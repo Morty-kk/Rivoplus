@@ -21,8 +21,8 @@ import { copy, products, type Language } from "./index-content";
 import { RIVO_WHATSAPP_PHONE, RIVO_TELEGRAM_USERNAME } from "@/config/contact";
 import adobePic from "../assets/adobe_pic.png";
 import adobePicAr from "../assets/adobe_pic_ar.png";
-import canvaPic from "../assets/canva_pic.png";
-import canvaPicAr from "../assets/canva_pic_ar.png";
+import canvaPic from "../assets/canva_pic.webp";
+import canvaPicAr from "../assets/canva_pic_ar.webp";
 
 const getSavedLanguage = (): Language => {
   if (typeof window === "undefined") return "ar";
