@@ -90,15 +90,21 @@ const getInitialLanguage = (): Language => {
 };
 
 const Index = () => {
-  // configure this to the WhatsApp URL you want the trial button to open
-  const WHATSAPP_TRIAL_LINK = `https://wa.me/${RIVO_WHATSAPP_PHONE}?text=I%20want%20the%2024h%20trial`;
-
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { addItem, itemCount } = useCart();
   const { toast } = useToast();
 
   const t = copy[language] ?? copy.ar;
+
+  // WhatsApp trial message, bound to the active site language
+  const trialMessage =
+    language === "ar"
+      ? "مرحباً Rivo+، أريد تجربة 24 ساعة"
+      : language === "de"
+      ? "Hallo Rivo+, ich möchte die 24-Stunden-Testversion"
+      : "Hello Rivo+, I want the 24h trial";
+  const WHATSAPP_TRIAL_LINK = `https://wa.me/${RIVO_WHATSAPP_PHONE}?text=${encodeURIComponent(trialMessage)}`;
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
