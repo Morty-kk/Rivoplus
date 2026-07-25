@@ -19,7 +19,17 @@ const t = {
   hours: { ar: "ساعة", en: "hours", de: "Stunden" },
   trial: { ar: "تجربة", en: "Trial", de: "Test" },
   onRequest: { ar: "حسب الطلب", en: "On request", de: "Auf Anfrage" },
+  trialRequest: {
+    ar: "مرحباً Rivo+، أريد تجربة 24 ساعة.",
+    en: "Hello Rivo+, I would like the 24h trial.",
+    de: "Hallo Rivo+, ich möchte den 24-Stunden-Test.",
+  },
 };
+
+/** Message pre-filled in the WhatsApp deep link of the "24h trial" hero button. */
+export function buildTrialMessage(language: Language): string {
+  return t.trialRequest[language] ?? t.trialRequest.ar;
+}
 
 
 function formatDuration(

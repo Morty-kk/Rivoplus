@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Play, MessageCircle, Send, Menu, X, ShoppingCart } from "lucide-react";
@@ -10,6 +10,7 @@ import CartSection from "@/components/CartSection";
 import { TextParticles } from "@/components/TextParticles";
 import { useCart } from "@/lib/cart";
 import { buildCartItem } from "@/lib/productSelection";
+import { buildTrialMessage } from "@/lib/orderMessage";
 import { useToast } from "@/hooks/use-toast";
 import type { TvPriceTable } from "@/components/TvPlanSelector";
 import type { MusicPrices } from "@/components/MusicPlanSelector";
@@ -90,15 +91,19 @@ const getInitialLanguage = (): Language => {
 };
 
 const Index = () => {
-  // configure this to the WhatsApp URL you want the trial button to open
-  const WHATSAPP_TRIAL_LINK = `https://wa.me/${RIVO_WHATSAPP_PHONE}?text=I%20want%20the%2024h%20trial`;
-
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { addItem, itemCount } = useCart();
   const { toast } = useToast();
 
   const t = copy[language] ?? copy.ar;
+
+  // trial button opens WhatsApp pre-filled in the language the site is currently in
+  const WHATSAPP_TRIAL_LINK = useMemo(
+    () =>
+      `https://wa.me/${RIVO_WHATSAPP_PHONE}?text=${encodeURIComponent(buildTrialMessage(language))}`,
+    [language],
+  );
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
