@@ -8,11 +8,16 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
   const doneRef = useRef(false);
 
   useEffect(() => {
-    const DURATION = 1800;
+    const DURATION = 600;
     const start = Date.now();
-    let raf = 0;
     let interval = 0;
 
+    // Driven by a plain interval rather than requestAnimationFrame: the app now
+    // mounts behind this overlay, so every re-render here competes with the real
+    // page render on slow devices. ~10 updates over the whole run is enough —
+    // the 80ms CSS transition on the progress arc interpolates the gaps — and an
+    // interval (unlike rAF) still fires in a background or occluded tab, so the
+    // gate always completes.
     const update = () => {
       const elapsed = Date.now() - start;
       const p = Math.min(100, (elapsed / DURATION) * 100);
@@ -26,20 +31,9 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
         }, 220);
       }
     };
+    interval = window.setInterval(update, 60);
 
-    const tick = () => {
-      update();
-      if (!doneRef.current) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    // rAF is throttled or paused entirely in background/occluded tabs; without
-    // this fallback the loading gate can never complete and the app never mounts.
-    interval = window.setInterval(update, 250);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.clearInterval(interval);
-    };
+    return () => window.clearInterval(interval);
   }, [onDone]);
 
   const offset = CIRC * (1 - progress / 100);

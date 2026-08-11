@@ -10,6 +10,20 @@
     />
     <meta name="author" content="Rivo Plus" />
 
+    <!-- Cairo. Declared here rather than via @import in index.css so the browser
+         discovers it in the initial HTML instead of after the stylesheet lands.
+         preconnect warms the gstatic TLS handshake in parallel. The 400..900
+         range is the variable font — Google serves the same single woff2 file it
+         serves for discrete weights, so this costs nothing extra and additionally
+         renders font-medium (500) and font-extrabold (800) at their real weights
+         instead of snapping them to the nearest declared one. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400..900&display=swap"
+    />
+
     <!-- Browser Tab Logo -->
     <link rel="icon" type="image/png" href="/logo_blue_B.png" />
     <link rel="apple-touch-icon" href="/logo_blue_B.png" />
