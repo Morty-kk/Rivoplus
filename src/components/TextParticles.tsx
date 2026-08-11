@@ -86,7 +86,23 @@ export function TextParticles({ language }: { language: Language }) {
 
     const ctx = canvas.getContext('2d')!;
 
-    const loop = () => {
+    // Floating words are pure motion — there is nothing meaningful to show as a
+    // static frame, so users who ask for reduced motion just get a clean hero.
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      return () => ro.disconnect();
+    }
+
+    // Match WallpaperEngine: cap the ambient animation at ~30fps. The particles
+    // drift slowly enough that the halved frame rate is not noticeable, and it
+    // halves the per-second cost of the glow passes below.
+    const FRAME_MS = 1000 / 30;
+    let lastFrame = 0;
+
+    const loop = (ts: number) => {
+      rafRef.current = requestAnimationFrame(loop);
+      if (ts - lastFrame < FRAME_MS) return;
+      lastFrame = ts;
+
       const now  = Date.now();
       const dt   = Math.min(now - lastRef.current, 50); // cap at 50ms
       lastRef.current = now;
@@ -130,13 +146,16 @@ export function TextParticles({ language }: { language: Language }) {
         ctx.textBaseline = 'middle';
         ctx.globalAlpha = alpha;
 
-        // Glow layers
+        // Coloured glow pass. shadowBlur is by far the most expensive canvas 2D
+        // operation here, so only this pass pays for it — the white core below
+        // is drawn crisp (shadowBlur 0) instead of blurred a second time. Same
+        // look, roughly half the blur work per particle.
         ctx.shadowColor  = p.color;
         ctx.shadowBlur   = p.blur * 2;
         ctx.fillStyle    = p.color;
         ctx.fillText(p.word, p.x, p.y);
 
-        ctx.shadowBlur   = p.blur * 0.5;
+        ctx.shadowBlur   = 0;
         ctx.fillStyle    = '#fff';
         ctx.globalAlpha  = alpha * 0.35;
         ctx.fillText(p.word, p.x, p.y);
@@ -144,12 +163,29 @@ export function TextParticles({ language }: { language: Language }) {
         ctx.restore();
         return true;
       });
-
-      rafRef.current = requestAnimationFrame(loop);
     };
 
     rafRef.current = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
+
+    // Stop rendering entirely while the tab is hidden; resume on return.
+    // Without this the particle clock keeps running against a canvas nobody
+    // can see. `lastRef` is reset so the first frame back does not apply one
+    // huge dt and teleport every particle up the screen.
+    const onVisibility = () => {
+      cancelAnimationFrame(rafRef.current);
+      if (!document.hidden) {
+        lastRef.current = Date.now();
+        lastFrame = 0;
+        rafRef.current = requestAnimationFrame(loop);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      ro.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
   return (

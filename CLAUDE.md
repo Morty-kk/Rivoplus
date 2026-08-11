@@ -44,7 +44,7 @@ Pure static SPA — no backend, no API, no auth. All orders flow through WhatsAp
 | `/products` | redirect | → `/#products` |
 | `/cart` | redirect | → `/#cart` |
 
-Routes only render after the `LoadingScreen` completes (`loaded` state in `App.tsx`). If a route appears to not render, check this gate first.
+Routes mount immediately, with the `LoadingScreen` overlaid on top of them until it fades (`loaded` state in `App.tsx`). Route content therefore renders while the overlay is still visible — do not assume a route's effects run only after the overlay is gone.
 
 `ProductsPage.tsx` and `CartPage.tsx` exist in `src/pages/` but are not wired into the router — they are orphaned.
 
@@ -62,7 +62,7 @@ Images often have Arabic variants: default image + optional `*_ar` sibling (e.g.
 2. `TooltipProvider` — Radix tooltip context
 3. `CartProvider` — localStorage cart context
 4. `WallpaperEngine` — animated canvas always rendered behind content
-5. `LoadingScreen` — shown once on first mount, then hidden via `onDone` callback
+5. `LoadingScreen` — overlay shown once on first mount (z-9999), then unmounted via `onDone` callback; the routes below it render underneath it the whole time
 6. `ScrollToHash` — syncs React Router navigation to `#hash` anchors
 7. Dark mode is force-enabled via `document.documentElement.classList.add("dark")` in a `useEffect` — do not add a theme toggle
 

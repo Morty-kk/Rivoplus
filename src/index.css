@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+/* Cairo is loaded from index.html, not with @import. An @import here is only
+   discoverable after this stylesheet has been downloaded and parsed, which
+   pushed the font request two round trips down the critical path. */
 
 @tailwind base;
 @tailwind components;

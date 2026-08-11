@@ -32,24 +32,27 @@ const App = () => {
           {/* Animated canvas wallpaper — always behind everything */}
           <WallpaperEngine />
 
+          {/*
+            The routes mount immediately and the loading screen sits on top of
+            them until it fades. Previously this was `{loaded && ...}`, which
+            meant React only started rendering the page *after* the overlay
+            finished — so a slow device paid the overlay wait and the render cost
+            back to back. Rendering underneath overlaps the two.
+          */}
           {!loaded && <LoadingScreen onDone={onLoadDone} />}
 
-          {loaded && (
-            <>
-              <ScrollToHash />
-              <Toaster />
-              <Sonner />
-              <Suspense fallback={null}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/products" element={<Navigate to="/#products" replace />} />
-                  <Route path="/product/:slug" element={<ProductDetails />} />
-                  <Route path="/cart" element={<Navigate to="/#cart" replace />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </>
-          )}
+          <ScrollToHash />
+          <Toaster />
+          <Sonner />
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/products" element={<Navigate to="/#products" replace />} />
+              <Route path="/product/:slug" element={<ProductDetails />} />
+              <Route path="/cart" element={<Navigate to="/#cart" replace />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </CartProvider>
       </TooltipProvider>
     </QueryClientProvider>
